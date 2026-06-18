@@ -1,0 +1,700 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#1a1714">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Ledger">
+<title>The Weight — Promise Ledger</title>
+
+<!-- PWA manifest injected inline so the whole app is one file -->
+<link rel="manifest" href='data:application/manifest+json,{"name":"The Weight — Promise Ledger","short_name":"The Weight","start_url":".","display":"standalone","background_color":"%231a1714","theme_color":"%231a1714","icons":[{"src":"data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 192 192%27%3E%3Crect width=%27192%27 height=%27192%27 fill=%27%231a1714%27/%3E%3Ccircle cx=%2796%27 cy=%27110%27 r=%2748%27 fill=%27none%27 stroke=%27%23c9a24b%27 stroke-width=%276%27/%3E%3Ccircle cx=%2796%27 cy=%27115%27 r=%2718%27 fill=%27%23c9a24b%27/%3E%3C/svg%3E","sizes":"192x192","type":"image/svg+xml"}]}'>
+
+<style>
+  :root {
+    --ink:        #1a1714;
+    --paper:      #f0e9dd;
+    --paper-dim:  #ddd2bf;
+    --line:       #c9bca3;
+    --gold:       #c9a24b;
+    --self:       #6f8f6a;   /* promises to self  */
+    --self-dim:   #46583f;
+    --other:      #7d6a9c;   /* promises to others */
+    --other-dim:  #4b3f60;
+    --broken:     #a6584f;
+    --shadow:     rgba(0,0,0,.35);
+    --r: 14px;
+  }
+  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  html, body { margin: 0; padding: 0; }
+  body {
+    background:
+      radial-gradient(120% 80% at 50% -10%, #2a241d 0%, var(--ink) 60%);
+    color: var(--paper);
+    font-family: "Iowan Old Style", "Palatino Linotype", Palatino, Georgia, serif;
+    min-height: 100vh;
+    min-height: 100dvh;
+    padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
+    line-height: 1.5;
+  }
+  .wrap { max-width: 940px; margin: 0 auto; padding: 26px 18px 120px; }
+
+  header.masthead { text-align: center; margin-bottom: 8px; }
+  .masthead .kicker {
+    font-family: ui-monospace, "SF Mono", Menlo, monospace;
+    letter-spacing: .34em; text-transform: uppercase;
+    font-size: 11px; color: var(--gold); margin: 0 0 6px;
+  }
+  .masthead h1 {
+    font-size: clamp(30px, 7vw, 50px); margin: 0; font-weight: 600;
+    letter-spacing: .01em;
+  }
+  .masthead .sub { color: var(--paper-dim); font-style: italic; font-size: 15px; margin-top: 6px; }
+
+  /* ---- the four jars ---- */
+  .jars {
+    display: grid; grid-template-columns: repeat(4, 1fr);
+    gap: 10px; margin: 26px 0 8px;
+  }
+  @media (max-width: 560px){ .jars { grid-template-columns: repeat(2,1fr); gap: 14px; } }
+  .jar-card {
+    background: rgba(255,255,255,.03);
+    border: 1px solid rgba(201,188,163,.18);
+    border-radius: var(--r); padding: 12px 10px 14px;
+    text-align: center; cursor: pointer;
+    transition: transform .15s ease, border-color .15s ease, background .15s ease;
+  }
+  .jar-card:hover { transform: translateY(-2px); border-color: var(--gold); }
+  .jar-card.active { border-color: var(--gold); background: rgba(201,162,75,.10); }
+  .jar-svg { width: 100%; height: 96px; display: block; }
+  .jar-name {
+    font-family: ui-monospace, "SF Mono", Menlo, monospace;
+    text-transform: uppercase; letter-spacing: .18em; font-size: 10.5px;
+    margin-top: 8px; color: var(--paper-dim);
+  }
+  .jar-card.active .jar-name { color: var(--gold); }
+  .jar-count { font-size: 22px; font-weight: 600; margin-top: 2px; }
+  .jar-weight {
+    font-family: ui-monospace, monospace; font-size: 10px; color: var(--line);
+    margin-top: 1px; letter-spacing: .04em;
+  }
+
+  /* ---- toolbar ---- */
+  .toolbar {
+    display: flex; flex-wrap: wrap; gap: 10px; align-items: center;
+    margin: 22px 0 14px;
+  }
+  .toolbar .grow { flex: 1 1 180px; }
+  input[type=text], input[type=search], textarea, select {
+    width: 100%; background: rgba(255,255,255,.04); color: var(--paper);
+    border: 1px solid rgba(201,188,163,.25); border-radius: 10px;
+    padding: 11px 12px; font: inherit; font-size: 15px;
+  }
+  input::placeholder, textarea::placeholder { color: #8c8273; }
+  textarea { resize: vertical; min-height: 70px; line-height: 1.45; }
+  select { appearance: none; }
+
+  .btn {
+    border: 1px solid rgba(201,188,163,.3); background: rgba(255,255,255,.04);
+    color: var(--paper); border-radius: 10px; padding: 11px 16px;
+    font: inherit; font-size: 14px; cursor: pointer; white-space: nowrap;
+    transition: background .15s, border-color .15s, transform .1s;
+  }
+  .btn:hover { border-color: var(--gold); }
+  .btn:active { transform: translateY(1px); }
+  .btn.gold { background: var(--gold); color: #20180a; border-color: var(--gold); font-weight: 600; }
+  .btn.ghost { background: transparent; }
+  .btn.sm { padding: 7px 11px; font-size: 12.5px; }
+
+  /* ---- list ---- */
+  .list { display: flex; flex-direction: column; gap: 10px; }
+  .entry {
+    display: grid; grid-template-columns: 8px 1fr auto; gap: 0 14px;
+    background: rgba(255,255,255,.035); border: 1px solid rgba(201,188,163,.15);
+    border-radius: var(--r); overflow: hidden;
+  }
+  .entry .spine { width: 8px; }
+  .entry.self  .spine { background: var(--self); }
+  .entry.other .spine { background: var(--other); }
+  .entry .body { padding: 13px 0 13px 2px; min-width: 0; }
+  .entry .text { font-size: 16.5px; }
+  .entry.done .text { opacity: .62; }
+  .entry.broken .text { text-decoration: line-through; opacity: .55; }
+  .entry .meta {
+    font-family: ui-monospace, monospace; font-size: 11px; color: var(--line);
+    margin-top: 6px; display: flex; flex-wrap: wrap; gap: 4px 12px; align-items: center;
+  }
+  .disc {
+    display: inline-flex; align-items: center; justify-content: center;
+    min-width: 30px; height: 20px; padding: 0 6px; border-radius: 10px;
+    background: rgba(201,162,75,.15); color: var(--gold);
+    border: 1px solid rgba(201,162,75,.4); font-weight: 600; letter-spacing: .02em;
+  }
+  .tag { padding: 1px 8px; border-radius: 9px; border: 1px solid; font-size: 10px; text-transform: uppercase; letter-spacing: .1em; }
+  .tag.self  { color: var(--self);  border-color: var(--self-dim); }
+  .tag.other { color: var(--other); border-color: var(--other-dim); }
+  .reason { color: var(--broken); font-style: italic; }
+  .entry .actions {
+    display: flex; flex-direction: column; gap: 6px; padding: 11px 12px 11px 0;
+    justify-content: center; align-items: stretch;
+  }
+  @media (max-width: 560px){
+    .entry { grid-template-columns: 8px 1fr; }
+    .entry .actions { grid-column: 2; flex-direction: row; flex-wrap: wrap;
+      padding: 0 12px 12px; }
+  }
+
+  .empty { text-align: center; color: var(--paper-dim); font-style: italic;
+    padding: 50px 20px; border: 1px dashed rgba(201,188,163,.2); border-radius: var(--r); }
+
+  /* ---- footer actions ---- */
+  .data-row { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; margin-top: 30px; }
+
+  /* ---- modal ---- */
+  .scrim {
+    position: fixed; inset: 0; background: rgba(10,8,6,.66); backdrop-filter: blur(3px);
+    display: none; align-items: flex-end; justify-content: center; z-index: 40;
+  }
+  .scrim.open { display: flex; }
+  @media (min-width: 600px){ .scrim { align-items: center; } }
+  .sheet {
+    width: 100%; max-width: 560px; background: #221d17;
+    border: 1px solid rgba(201,188,163,.22);
+    border-radius: 18px 18px 0 0; padding: 22px 20px calc(22px + env(safe-area-inset-bottom));
+  }
+  @media (min-width: 600px){ .sheet { border-radius: 18px; } }
+  .sheet h2 { margin: 0 0 16px; font-size: 22px; font-weight: 600; }
+  .field { margin-bottom: 14px; }
+  .field label {
+    display: block; font-family: ui-monospace, monospace; font-size: 11px;
+    text-transform: uppercase; letter-spacing: .14em; color: var(--paper-dim); margin-bottom: 6px;
+  }
+  .seg { display: flex; gap: 8px; }
+  .seg button {
+    flex: 1; padding: 11px; border-radius: 10px; font: inherit; font-size: 14px; cursor: pointer;
+    background: rgba(255,255,255,.04); color: var(--paper); border: 1px solid rgba(201,188,163,.25);
+  }
+  .seg button.on.self  { background: var(--self);  color: #15210f; border-color: var(--self); }
+  .seg button.on.other { background: var(--other); color: #1a1226; border-color: var(--other); }
+  .sheet-actions { display: flex; gap: 10px; margin-top: 8px; }
+  .sheet-actions .btn { flex: 1; }
+
+  .toast {
+    position: fixed; left: 50%; bottom: calc(24px + env(safe-area-inset-bottom));
+    transform: translateX(-50%) translateY(20px); opacity: 0;
+    background: var(--gold); color: #20180a; font-weight: 600; font-size: 14px;
+    padding: 11px 18px; border-radius: 999px; z-index: 60; pointer-events: none;
+    transition: opacity .25s, transform .25s; box-shadow: 0 8px 24px var(--shadow);
+  }
+  .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+  .fab {
+    position: fixed; right: 18px; bottom: calc(18px + env(safe-area-inset-bottom));
+    background: var(--gold); color: #20180a; border: none; border-radius: 999px;
+    font: inherit; font-weight: 600; font-size: 15px; padding: 15px 22px;
+    box-shadow: 0 8px 24px var(--shadow); cursor: pointer; z-index: 30;
+  }
+  .fab:active { transform: translateY(1px); }
+
+  .filters { display: flex; gap: 8px; flex-wrap: wrap; }
+  .chip {
+    font-family: ui-monospace, monospace; font-size: 11px; text-transform: uppercase;
+    letter-spacing: .1em; padding: 7px 12px; border-radius: 999px; cursor: pointer;
+    background: rgba(255,255,255,.04); border: 1px solid rgba(201,188,163,.22); color: var(--paper-dim);
+  }
+  .chip.on { background: rgba(201,162,75,.16); color: var(--gold); border-color: var(--gold); }
+  .hint { font-size: 12px; color: var(--line); text-align:center; margin-top: 8px; font-style: italic;}
+
+  /* ---- sync status badge ---- */
+  .syncbar { display: flex; justify-content: center; margin-top: 16px; }
+  .syncbadge {
+    display: inline-flex; align-items: center; gap: 8px;
+    font-family: ui-monospace, monospace; font-size: 11.5px; letter-spacing: .04em;
+    padding: 7px 14px; border-radius: 999px; border: 1px solid;
+    background: rgba(255,255,255,.03);
+  }
+  .syncbadge .dot { width: 8px; height: 8px; border-radius: 50%; flex: none; }
+  .syncbadge.linked   { color: var(--self);  border-color: var(--self-dim); }
+  .syncbadge.linked   .dot { background: var(--self); }
+  .syncbadge.dirty    { color: var(--gold);  border-color: rgba(201,162,75,.5); }
+  .syncbadge.dirty    .dot { background: var(--gold); animation: pulse 1.4s infinite; }
+  .syncbadge.local    { color: var(--paper-dim); border-color: rgba(201,188,163,.25); }
+  .syncbadge.local    .dot { background: var(--line); }
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.3} }
+  a { color: var(--gold); }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="masthead">
+    <p class="kicker">A Private Reckoning</p>
+    <h1>The Weight</h1>
+    <p class="sub">Every promise made, and what became of it.</p>
+  </header>
+
+  <!-- JARS -->
+  <section class="jars" id="jars"></section>
+  <p class="hint" id="loadHint">Tap a jar to see what's inside.</p>
+
+  <!-- TOOLBAR -->
+  <div class="toolbar">
+    <div class="grow"><input type="search" id="search" placeholder="Search promises…"></div>
+    <div class="filters">
+      <span class="chip" data-who="all">Everyone</span>
+      <span class="chip" data-who="self">To myself</span>
+      <span class="chip" data-who="other">To others</span>
+    </div>
+  </div>
+
+  <!-- LIST -->
+  <div class="list" id="list"></div>
+
+  <div class="data-row">
+    <button class="btn ghost sm" id="linkBtn">Link ledger file (auto-sync)</button>
+    <button class="btn ghost sm" id="exportBtn">Export ledger (.json)</button>
+    <button class="btn ghost sm" id="importBtn">Import ledger</button>
+    <button class="btn ghost sm" id="engraveBtn">Export discs for engraving (.csv)</button>
+    <input type="file" id="importFile" accept="application/json" hidden>
+  </div>
+
+  <div class="syncbar">
+    <span class="syncbadge local" id="syncBadge"><span class="dot"></span><span id="syncText">Saved on this device</span></span>
+  </div>
+
+  <p class="hint" id="syncHint">Changes save automatically on this device. Link a file in your cloud folder to sync everywhere without exporting.</p>
+
+</div>
+
+<button class="fab" id="addFab">＋ Make a promise</button>
+
+<!-- ADD / EDIT SHEET -->
+<div class="scrim" id="scrim">
+  <div class="sheet">
+    <h2 id="sheetTitle">Make a promise</h2>
+    <div class="field">
+      <label>The promise</label>
+      <textarea id="fText" placeholder="What are you binding yourself to?"></textarea>
+    </div>
+    <div class="field">
+      <label>To whom</label>
+      <div class="seg" id="fWho">
+        <button data-who="self" class="self">To myself</button>
+        <button data-who="other" class="other">To someone else</button>
+      </div>
+    </div>
+    <div class="field" id="standingField">
+      <label>Kind</label>
+      <div class="seg" id="fStanding">
+        <button data-standing="false" class="on self">Has an end</button>
+        <button data-standing="true" class="other">Standing — never finished</button>
+      </div>
+    </div>
+    <div class="sheet-actions">
+      <button class="btn ghost" id="cancelBtn">Cancel</button>
+      <button class="btn gold" id="saveBtn">Bind it</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+/* ===================================================================
+   THE WEIGHT — promise ledger
+   Single-file PWA. Data persists in localStorage; export/import to a
+   cloud-synced .json file to share across devices.
+   States: open · standing · kept · broken
+   =================================================================== */
+
+const STORE_KEY = "the_weight_ledger_v1";
+const WEIGHTS = { open: 1, standing: 3, kept: 1, broken: 1 }; // symbolic grams per disc
+const DISC_GRAMS = 7; // a stamped aluminum-ish disc
+
+let state = load();
+let activeJar = "open";
+let whoFilter = "all";
+let editingId = null;
+let draftWho = "self";
+let draftStanding = false;
+
+/* ---------- persistence ---------- */
+let fileHandle = null;      // linked cloud-folder file (File System Access API)
+let dirty = false;          // unsaved-to-file changes exist
+let saveTimer = null;
+const supportsFS = ("showSaveFilePicker" in window) && ("showOpenFilePicker" in window);
+
+function load(){
+  try {
+    const raw = localStorage.getItem(STORE_KEY);
+    if (raw) return JSON.parse(raw);
+  } catch(e){}
+  return { nextDisc: 1, promises: [] };
+}
+
+// Save is now: write local immediately (never lose work on-device),
+// then debounce-write to the linked cloud file if one is connected.
+function save(){
+  localStorage.setItem(STORE_KEY, JSON.stringify(state));
+  markTouched();
+  render();
+  if (fileHandle){
+    dirty = true;
+    updateSyncBadge();
+    clearTimeout(saveTimer);
+    saveTimer = setTimeout(writeToFile, 600);   // debounce rapid edits
+  } else {
+    updateSyncBadge();
+  }
+}
+
+async function writeToFile(){
+  if (!fileHandle) return;
+  try {
+    const w = await fileHandle.createWritable();
+    await w.write(JSON.stringify(state, null, 2));
+    await w.close();
+    dirty = false;
+    updateSyncBadge();
+  } catch(e){
+    updateSyncBadge();   // leave it marked dirty; user can retry/export
+    toast("Couldn't write the linked file — re-link or export.");
+  }
+}
+
+function updateSyncBadge(){
+  const badge = $("#syncBadge"), txt = $("#syncText");
+  if (!badge) return;
+  badge.classList.remove("local","linked","dirty");
+  if (!fileHandle){
+    badge.classList.add("local");
+    txt.textContent = "Saved on this device";
+  } else if (dirty){
+    badge.classList.add("dirty");
+    txt.textContent = "Saving to cloud file…";
+  } else {
+    badge.classList.add("linked");
+    txt.textContent = "Auto-synced to cloud file";
+  }
+}
+
+/* ---------- helpers ---------- */
+const $ = s => document.querySelector(s);
+const now = () => new Date().toISOString();
+const fmt = iso => iso ? new Date(iso).toLocaleDateString(undefined,{year:'numeric',month:'short',day:'numeric'}) : '';
+function toast(msg){ const t=$("#toast"); t.textContent=msg; t.classList.add("show"); clearTimeout(t._t); t._t=setTimeout(()=>t.classList.remove("show"),1900); }
+
+const JAR_DEFS = [
+  { key:"open",     label:"Open",     desc:"in progress" },
+  { key:"standing", label:"Standing", desc:"never finished" },
+  { key:"kept",     label:"Kept",     desc:"honored" },
+  { key:"broken",   label:"Broken",   desc:"let go" },
+];
+
+/* ---------- jar SVG (fill ∝ count, color = jar identity) ---------- */
+function jarSVG(count, max, key){
+  const fillColors = { open:"#b9a06a", standing:"#7d6a9c", kept:"#6f8f6a", broken:"#a6584f" };
+  const c = fillColors[key];
+  const ratio = max>0 ? Math.min(1, count/max) : 0;
+  const jarTop=22, jarBot=90, jarH=jarBot-jarTop;
+  const level = jarBot - jarH*ratio;
+  // marble dots scattered in the filled region
+  let dots="";
+  const n = Math.min(count, 18);
+  for(let i=0;i<n;i++){
+    const x = 18 + Math.random()*44;
+    const y = level + 4 + Math.random()*(jarBot-level-6 < 4 ? 4 : (jarBot-level-6));
+    if (y < jarBot-3 && y > jarTop) dots += `<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="3.1" fill="${c}" opacity="0.9"/>`;
+  }
+  return `<svg class="jar-svg" viewBox="0 0 80 100" preserveAspectRatio="xMidYMid meet">
+    <rect x="28" y="8" width="24" height="7" rx="2" fill="none" stroke="#c9bca3" stroke-width="1.6" opacity=".7"/>
+    <path d="M16 20 Q16 16 20 16 L60 16 Q64 16 64 20 L64 90 Q64 94 60 94 L20 94 Q16 94 16 90 Z"
+          fill="rgba(255,255,255,.03)" stroke="#c9bca3" stroke-width="1.6" opacity=".85"/>
+    <clipPath id="clip-${key}"><path d="M17 20 L63 20 L63 92 Q63 93 60 93 L20 93 Q17 93 17 92 Z"/></clipPath>
+    <g clip-path="url(#clip-${key})">
+      <rect x="16" y="${level}" width="48" height="${(jarBot-level+4).toFixed(1)}" fill="${c}" opacity=".22"/>
+      ${dots}
+    </g>
+  </svg>`;
+}
+
+/* ---------- render ---------- */
+function render(){
+  const counts = { open:0, standing:0, kept:0, broken:0 };
+  state.promises.forEach(p => counts[p.status]++);
+  const max = Math.max(1, ...Object.values(counts));
+
+  // jars
+  $("#jars").innerHTML = JAR_DEFS.map(j=>{
+    const n = counts[j.key];
+    const grams = n * DISC_GRAMS * WEIGHTS[j.key];
+    return `<div class="jar-card ${activeJar===j.key?'active':''}" data-jar="${j.key}">
+      ${jarSVG(n, max, j.key)}
+      <div class="jar-name">${j.label}</div>
+      <div class="jar-count">${n}</div>
+      <div class="jar-weight">${grams} g</div>
+    </div>`;
+  }).join("");
+  $("#jars").querySelectorAll(".jar-card").forEach(el=>{
+    el.onclick = ()=>{ activeJar = el.dataset.jar; render(); };
+  });
+
+  // list
+  const q = $("#search").value.trim().toLowerCase();
+  let rows = state.promises
+    .filter(p => p.status === activeJar)
+    .filter(p => whoFilter==="all" ? true : p.who===whoFilter)
+    .filter(p => !q || p.text.toLowerCase().includes(q) || ("d"+p.disc).includes(q) || String(p.disc)===q)
+    .sort((a,b)=> b.disc - a.disc);
+
+  const list = $("#list");
+  if (rows.length === 0){
+    const msgs = {
+      open: "No open promises. Make one — it'll land here.",
+      standing: "No standing promises yet. These are the forever ones.",
+      kept: "Nothing kept yet. Honor an open promise and it moves here.",
+      broken: "Nothing broken. Long may it stay that way."
+    };
+    list.innerHTML = `<div class="empty">${msgs[activeJar]}</div>`;
+    return;
+  }
+
+  list.innerHTML = rows.map(p=>{
+    const cls = [p.who, p.status==="kept"?"done":"", p.status==="broken"?"broken":""].join(" ");
+    const whoTag = `<span class="tag ${p.who}">${p.who==="self"?"to myself":"to someone"}</span>`;
+    let dateline = `made ${fmt(p.date_made)}`;
+    if (p.date_closed) dateline += ` · ${p.status} ${fmt(p.date_closed)}`;
+    const reason = p.reason ? `<span class="reason">“${escapeHtml(p.reason)}”</span>` : "";
+    return `<div class="entry ${cls}">
+      <div class="spine"></div>
+      <div class="body">
+        <div class="text">${escapeHtml(p.text)}</div>
+        <div class="meta">
+          <span class="disc">D${String(p.disc).padStart(3,'0')}</span>
+          ${whoTag}
+          <span>${dateline}</span>
+          ${reason}
+        </div>
+      </div>
+      <div class="actions">${actionsFor(p)}</div>
+    </div>`;
+  }).join("");
+
+  list.querySelectorAll("[data-act]").forEach(b=>{
+    b.onclick = ()=> doAction(b.dataset.act, b.dataset.id);
+  });
+}
+
+function actionsFor(p){
+  const id = p.id;
+  const b = (act,label,cls="ghost")=>`<button class="btn ${cls} sm" data-act="${act}" data-id="${id}">${label}</button>`;
+  if (p.status==="open")     return b("keep","Kept ✓","gold")+b("standing","Make standing")+b("break","Broke it")+b("edit","Edit");
+  if (p.status==="standing") return b("break","Let go")+b("edit","Edit");
+  if (p.status==="kept")     return b("reopen","Reopen")+b("edit","Edit");
+  if (p.status==="broken")   return b("reopen","Reopen")+b("edit","Edit");
+  return "";
+}
+
+function escapeHtml(s){ return s.replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+
+/* ---------- actions ---------- */
+function doAction(act, id){
+  const p = state.promises.find(x=>x.id===id);
+  if (!p) return;
+  if (act==="keep"){ p.status="kept"; p.date_closed=now(); p.reason=""; save(); toast("Kept. Moved to the Kept jar."); }
+  else if (act==="standing"){ p.status="standing"; p.date_closed=null; p.reason=""; save(); toast("Now a standing promise."); }
+  else if (act==="break"){
+    const why = prompt("Why did this one break? (kept for your own learning — optional)") || "";
+    p.status="broken"; p.date_closed=now(); p.reason=why.trim(); save(); toast("Marked broken.");
+  }
+  else if (act==="reopen"){ p.status="open"; p.date_closed=null; p.reason=""; save(); toast("Reopened."); }
+  else if (act==="edit"){ openSheet(p); }
+}
+
+/* ---------- add / edit sheet ---------- */
+function openSheet(p=null){
+  editingId = p ? p.id : null;
+  $("#sheetTitle").textContent = p ? "Edit promise" : "Make a promise";
+  $("#fText").value = p ? p.text : "";
+  draftWho = p ? p.who : "self";
+  draftStanding = p ? (p.status==="standing") : false;
+  // standing toggle only meaningful for open/standing items
+  const lockStanding = p && (p.status==="kept" || p.status==="broken");
+  $("#standingField").style.display = lockStanding ? "none" : "block";
+  paintSeg();
+  $("#scrim").classList.add("open");
+  $("#fText").focus();
+}
+function paintSeg(){
+  $("#fWho").querySelectorAll("button").forEach(b=>{
+    b.classList.toggle("on", b.dataset.who===draftWho);
+  });
+  $("#fStanding").querySelectorAll("button").forEach(b=>{
+    b.classList.toggle("on", (b.dataset.standing==="true")===draftStanding);
+  });
+}
+function closeSheet(){ $("#scrim").classList.remove("open"); editingId=null; }
+
+function saveDraft(){
+  const text = $("#fText").value.trim();
+  if (!text){ toast("Write the promise first."); return; }
+  if (editingId){
+    const p = state.promises.find(x=>x.id===editingId);
+    p.text = text; p.who = draftWho;
+    if (p.status==="open" || p.status==="standing"){
+      p.status = draftStanding ? "standing" : "open";
+      if (p.status!=="broken") p.date_closed = null;
+    }
+    save(); toast("Updated.");
+  } else {
+    state.promises.push({
+      id: crypto.randomUUID(),
+      disc: state.nextDisc++,
+      text, who: draftWho,
+      status: draftStanding ? "standing" : "open",
+      date_made: now(), date_closed: null, reason: ""
+    });
+    activeJar = draftStanding ? "standing" : "open";
+    save(); toast("Bound. Disc D"+String(state.nextDisc-1).padStart(3,'0')+".");
+  }
+  closeSheet();
+}
+
+/* ---------- linked-file autosave (File System Access API) ---------- */
+async function linkFile(){
+  if (!supportsFS){
+    toast("This browser can't auto-link a file. Use Export/Import here.");
+    return;
+  }
+  try {
+    // Offer: open an existing ledger file, or create a new one.
+    const choice = confirm("Link an EXISTING ledger file?\n\nOK = pick existing file (e.g. in Google Drive/iCloud folder)\nCancel = create a new ledger file");
+    if (choice){
+      const [h] = await window.showOpenFilePicker({
+        types:[{description:"Ledger", accept:{"application/json":[".json"]}}]
+      });
+      fileHandle = h;
+      // load that file's contents as the source of truth
+      const f = await h.getFile();
+      const data = JSON.parse(await f.text());
+      if (data && Array.isArray(data.promises)){
+        state = data;
+        if (!state.nextDisc) state.nextDisc = Math.max(0,...state.promises.map(p=>p.disc||0))+1;
+        localStorage.setItem(STORE_KEY, JSON.stringify(state));
+      }
+      toast("Linked. This file now auto-saves.");
+    } else {
+      fileHandle = await window.showSaveFilePicker({
+        suggestedName: "the-weight-ledger.json",
+        types:[{description:"Ledger", accept:{"application/json":[".json"]}}]
+      });
+      await writeToFile();
+      toast("New file created and linked. Auto-saving now.");
+    }
+    dirty = false;
+    render();
+    updateSyncBadge();
+  } catch(e){
+    if (e && e.name === "AbortError") return; // user cancelled the picker
+    toast("Couldn't link the file.");
+  }
+}
+
+// iPhone / non-supporting browsers: warn before leaving with unsaved exports.
+// (There it can't write the file itself, so nudge an export instead.)
+let touchedSinceExport = false;
+function markTouched(){ if (!fileHandle) touchedSinceExport = true; }
+window.addEventListener("beforeunload", e=>{
+  if (fileHandle && dirty){ writeToFile(); }
+  if (!fileHandle && touchedSinceExport){
+    e.preventDefault(); e.returnValue = "";   // browser shows leave-confirm
+  }
+});
+// Flush the linked file if the app is backgrounded (mobile app switch).
+document.addEventListener("visibilitychange", ()=>{
+  if (document.visibilityState === "hidden" && fileHandle && dirty) writeToFile();
+});
+
+function download(name, text, type){
+  const blob = new Blob([text], {type});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href=url; a.download=name; a.click();
+  URL.revokeObjectURL(url);
+}
+function exportJSON(){
+  download(`the-weight-${new Date().toISOString().slice(0,10)}.json`,
+           JSON.stringify(state,null,2), "application/json");
+  touchedSinceExport = false;
+  toast("Ledger exported.");
+}
+function exportEngraving(){
+  // one row per disc — what a stamping/engraving job needs
+  const rows = [["disc","stamp_text","status","to","date_made"]];
+  state.promises.slice().sort((a,b)=>a.disc-b.disc).forEach(p=>{
+    rows.push([
+      "D"+String(p.disc).padStart(3,'0'),
+      p.text.replace(/\s+/g,' ').slice(0,40),
+      p.status, p.who, p.date_made.slice(0,10)
+    ]);
+  });
+  const csv = rows.map(r=>r.map(c=>`"${String(c).replace(/"/g,'""')}"`).join(",")).join("\n");
+  download(`discs-${new Date().toISOString().slice(0,10)}.csv`, csv, "text/csv");
+  toast("Disc list exported for engraving.");
+}
+function importJSON(file){
+  const r = new FileReader();
+  r.onload = ()=>{
+    try {
+      const data = JSON.parse(r.result);
+      if (!data.promises || !Array.isArray(data.promises)) throw 0;
+      state = data;
+      if (!state.nextDisc) state.nextDisc = Math.max(0,...state.promises.map(p=>p.disc||0))+1;
+      save(); toast("Ledger imported.");
+    } catch(e){ toast("That file didn't look like a ledger."); }
+  };
+  r.readAsText(file);
+}
+
+/* ---------- wire up ---------- */
+$("#addFab").onclick = ()=> openSheet();
+$("#cancelBtn").onclick = closeSheet;
+$("#saveBtn").onclick = saveDraft;
+$("#scrim").onclick = e=>{ if(e.target===$("#scrim")) closeSheet(); };
+$("#fWho").onclick = e=>{ if(e.target.dataset.who){ draftWho=e.target.dataset.who; paintSeg(); } };
+$("#fStanding").onclick = e=>{ if(e.target.dataset.standing){ draftStanding=e.target.dataset.standing==="true"; paintSeg(); } };
+$("#search").oninput = render;
+document.querySelectorAll(".chip[data-who]").forEach(c=>{
+  c.onclick = ()=>{ whoFilter=c.dataset.who;
+    document.querySelectorAll(".chip[data-who]").forEach(x=>x.classList.toggle("on",x===c));
+    render(); };
+});
+document.querySelector('.chip[data-who="all"]').classList.add("on");
+$("#exportBtn").onclick = exportJSON;
+$("#engraveBtn").onclick = exportEngraving;
+$("#linkBtn").onclick = linkFile;
+if (!supportsFS){
+  $("#linkBtn").style.display = "none";
+  $("#syncHint").textContent = "Changes save automatically on this device. On iPhone, use Export to your cloud folder before switching devices — you'll be reminded if you try to leave with unsaved changes.";
+}
+$("#importBtn").onclick = ()=> $("#importFile").click();
+$("#importFile").onchange = e=>{ if(e.target.files[0]) importJSON(e.target.files[0]); e.target.value=""; };
+document.addEventListener("keydown", e=>{ if(e.key==="Escape") closeSheet(); });
+
+// register a no-op service worker from a blob so it's installable offline
+if ("serviceWorker" in navigator) {
+  const sw = `self.addEventListener("install",e=>self.skipWaiting());
+self.addEventListener("activate",e=>self.clients.claim());
+self.addEventListener("fetch",e=>{});`;
+  const url = URL.createObjectURL(new Blob([sw],{type:"text/javascript"}));
+  navigator.serviceWorker.register(url).catch(()=>{});
+}
+
+render();
+updateSyncBadge();
+</script>
+
+</body>
+</html>
