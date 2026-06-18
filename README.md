@@ -61,6 +61,57 @@ add weighted filler — metal discs alone are light.
 
 ---
 
+## Favor tokens (bearer IOUs you hand out)
+
+A **favor token** is a special promise you give *to someone else* as a physical
+IOU — a disc that means "the holder is owed one favor by me." Toggle **"A favor
+token"** when making a promise. Favors differ from normal promises:
+
+- **The favor is optional.** Leave it blank for a nebulous "one favor, TBD," and
+  fill in what it was later (even after it's redeemed).
+- **Weight is Ordinary or Serious only** (no Standing — you can't owe a forever-favor).
+- **It's a bearer token** — transferable. Recipient name is optional, since whoever
+  ends up holding the disc can redeem it.
+- **Front of disc:** `F-047` (F = favor + the number).
+- **Back of disc:** a unique **10-digit verification number**, which you
+  **hand-engrave** (not stamp). The app generates and stores it; it appears on the
+  entry and the stamping worklist as "back: 4829153607".
+
+### Three favor states
+Favors have their own lifecycle, separate from the four jars:
+
+```
+OUTSTANDING ──redeem──► REDEEMED ──favor done──► KEPT
+     │                      │
+     └──────break───────────┴──► BROKEN
+```
+
+- **Outstanding** — issued, out in the world, not yet called in.
+- **Redeemed** — they've cashed it in; you now *owe* the favor but haven't done it yet.
+- **Kept** — you've actually performed the favor. Done.
+- **Broken** — you failed to deliver a redeemed favor.
+
+All favor tokens live under the **"Favors owed"** tab (below the four jars), showing
+each token's state and verification number. Once kept or broken, the disc returns to you.
+
+### Anti-forgery (how the verification number protects you)
+A favor disc is like a banknote — it's only valid if it matches your private ledger:
+
+1. **The number is checked on redemption.** When someone presents a token, the app
+   asks you to read the 10-digit number off the back and confirms it matches the
+   record for that token. A wrong number → flagged as a possible forgery, redemption
+   blocked.
+2. **A token can only be redeemed once.** After redemption the app locks it, so a
+   copy of a spent disc is worthless (no double-spend).
+3. **Hand-engraving + a custom maker's mark** (physical layers) make the disc itself
+   hard to reproduce — see PHYSICAL_BUILD.md.
+
+> **Honest limits:** this stops forgeries and copies, but a *real* disc that's lost
+> or stolen is still valid in someone else's hands — that's the nature of a bearer
+> token. And a voluntary transfer (disc handed to a friend) is indistinguishable
+> from theft-with-consent. The protection is the ledger: only you can confirm a
+> token is genuine and unredeemed.
+
 ## The discs
 
 Every promise is assigned an auto-incrementing disc number the moment you make

@@ -145,6 +145,57 @@
   .stamptag.todo { color: var(--gold); border-color: rgba(201,162,75,.55); background: rgba(201,162,75,.08); }
   .reason { color: var(--broken); font-style: italic; }
 
+  /* favors */
+  .favor-tab {
+    margin-top: 10px; border: 1px solid rgba(201,162,75,.35);
+    background: rgba(201,162,75,.06); border-radius: var(--r);
+    padding: 12px 16px; display: flex; align-items: center; gap: 12px; cursor: pointer;
+    transition: border-color .15s, background .15s;
+  }
+  .favor-tab:hover { border-color: var(--gold); }
+  .favor-tab.active { border-color: var(--gold); background: rgba(201,162,75,.12); }
+  .favor-tab .ft-label { font-weight: 600; letter-spacing: .02em; }
+  .favor-tab .ft-count {
+    font-family: ui-monospace, monospace; font-size: 18px; font-weight: 600; color: var(--gold);
+    margin-left: auto;
+  }
+  .favor-tab .ft-sub { font-family: ui-monospace, monospace; font-size: 11px; color: var(--line); }
+  .entry.favor .spine { background: var(--gold); }
+  .favorstate { padding: 1px 8px; border-radius: 9px; border: 1px solid; font-size: 10px; text-transform: uppercase; letter-spacing: .08em; }
+  .favorstate.s-outstanding { color: var(--gold); border-color: rgba(201,162,75,.5); background: rgba(201,162,75,.08); }
+  .favorstate.s-redeemed { color: #c98b4b; border-color: #7a5e2a; }
+  .favorstate.s-kept { color: var(--self); border-color: var(--self-dim); }
+  .favorstate.s-broken { color: var(--broken); border-color: #6e3a34; }
+  .verifytag {
+    font-family: ui-monospace, monospace; font-size: 10px; padding: 1px 8px; border-radius: 9px;
+    color: var(--paper-dim); border: 1px dashed rgba(201,188,163,.4); letter-spacing: .06em;
+  }
+  .tbd { color: var(--line); font-style: italic; }
+
+  /* disc maker */
+  .discmaker { max-width: 560px; }
+  .dm-head { display:flex; align-items:baseline; justify-content:space-between; margin-bottom: 4px; }
+  .dm-progress { font-family: ui-monospace, monospace; font-size: 12px; color: var(--gold); }
+  .dm-stage {
+    display:flex; gap: 22px; justify-content:center; align-items:center;
+    padding: 18px 0; flex-wrap: wrap;
+  }
+  .dm-face { text-align:center; }
+  .dm-face .dm-side {
+    font-family: ui-monospace, monospace; font-size: 10px; letter-spacing:.18em;
+    text-transform:uppercase; color: var(--paper-dim); margin-top: 8px;
+  }
+  .dm-instructions {
+    background: rgba(255,255,255,.03); border:1px solid rgba(201,188,163,.18);
+    border-radius: var(--r); padding: 12px 14px; font-size: 14px; line-height:1.55;
+  }
+  .dm-instructions ol { margin: 0; padding-left: 20px; }
+  .dm-instructions li { margin: 3px 0; }
+  .dm-instructions .hl { color: var(--gold); font-weight:600; font-family: ui-monospace, monospace; }
+  .dm-nav { display:flex; gap:10px; margin: 14px 0 4px; }
+  .dm-nav .btn { flex:1; }
+  .dm-empty { text-align:center; color: var(--paper-dim); font-style:italic; padding: 30px 10px; }
+
   /* unstamped worklist banner */
   .worklist {
     margin: 14px 0 0; border: 1px solid rgba(201,162,75,.45);
@@ -267,13 +318,20 @@
 
   <!-- JARS -->
   <section class="jars" id="jars"></section>
+
+  <!-- FAVORS TAB -->
+  <div class="favor-tab" id="favorTab"></div>
+
   <p class="hint" id="loadHint">Tap a jar to see what's inside.</p>
 
   <!-- UNSTAMPED WORKLIST -->
   <div class="worklist" id="worklist">
     <div class="wl-head" id="wlHead">
       <span class="wl-title" id="wlTitle">Discs waiting to be stamped</span>
-      <button class="btn ghost sm" id="wlToggle">Show</button>
+      <span style="display:flex; gap:8px;">
+        <button class="btn gold sm" id="makeDiscsBtn">Make discs</button>
+        <button class="btn ghost sm" id="wlToggle">Show</button>
+      </span>
     </div>
     <div class="wl-items" id="wlItems"></div>
   </div>
@@ -313,11 +371,18 @@
 <div class="scrim" id="scrim">
   <div class="sheet">
     <h2 id="sheetTitle">Make a promise</h2>
-    <div class="field">
-      <label>The promise</label>
-      <textarea id="fText" placeholder="What are you binding yourself to?"></textarea>
+    <div class="field" id="favorField">
+      <label>Type</label>
+      <div class="seg" id="fFavor">
+        <button data-favor="false" class="on self">A promise</button>
+        <button data-favor="true" class="other">A favor token (IOU you hand out)</button>
+      </div>
     </div>
     <div class="field">
+      <label id="textLabel">The promise</label>
+      <textarea id="fText" placeholder="What are you binding yourself to?"></textarea>
+    </div>
+    <div class="field" id="whoField">
       <label>To whom</label>
       <div class="seg" id="fWho">
         <button data-who="self" class="self">To myself</button>
@@ -325,7 +390,7 @@
       </div>
     </div>
     <div class="field" id="nameField" style="display:none;">
-      <label>Their name</label>
+      <label id="nameLabel">Their name</label>
       <input type="text" id="fName" placeholder="e.g. Mom, Jordan, the team…" autocomplete="off">
     </div>
     <div class="field" id="standingField">
@@ -340,7 +405,7 @@
       <div class="seg seg3" id="fTier">
         <button data-tier="ordinary" class="on">Ordinary · Aluminum</button>
         <button data-tier="serious">Serious · Brass</button>
-        <button data-tier="standing">Standing · Copper</button>
+        <button data-tier="standing" id="tierStandingBtn">Standing · Copper</button>
       </div>
     </div>
     <div class="sheet-actions">
@@ -351,6 +416,26 @@
 </div>
 
 <div class="toast" id="toast"></div>
+
+<!-- DISC MAKER -->
+<div class="scrim" id="discScrim">
+  <div class="sheet discmaker">
+    <div class="dm-head">
+      <h2 id="dmTitle">Make discs</h2>
+      <span class="dm-progress" id="dmProgress"></span>
+    </div>
+    <div class="dm-stage" id="dmStage"></div>
+    <div class="dm-instructions" id="dmInstructions"></div>
+    <div class="dm-nav">
+      <button class="btn ghost" id="dmPrev">‹ Prev</button>
+      <button class="btn gold" id="dmStamped">Mark stamped ✓</button>
+      <button class="btn ghost" id="dmNext">Next ›</button>
+    </div>
+    <div class="sheet-actions">
+      <button class="btn ghost" id="dmClose">Done</button>
+    </div>
+  </div>
+</div>
 
 <script>
 /* ===================================================================
@@ -366,13 +451,26 @@ const DISC_GRAMS = 7; // a stamped aluminum-ish disc
 
 // weight tiers → which metal to stamp the disc in
 const TIERS = {
-  ordinary: { label: "Ordinary",  metal: "Aluminum" },
-  serious:  { label: "Serious",   metal: "Brass" },
-  standing: { label: "Standing",  metal: "Copper" }
+  ordinary: { label: "Ordinary",  metal: "Aluminum", face:"#c7cace", edge:"#8d9196", ink:"#3a3d42" },
+  serious:  { label: "Serious",   metal: "Brass",    face:"#cda84e", edge:"#977525", ink:"#4d3a10" },
+  standing: { label: "Standing",  metal: "Copper",   face:"#c47b52", edge:"#8a4f30", ink:"#411f10" }
 };
-// disc label as you stamp it: M-047 (to myself) / O-047 (to someone)
+// disc label as you stamp it (front of disc):
+//   M-047 (to myself) · O-047 (to someone) · F-047 (favor / bearer token)
 function discLabel(p){
-  return (p.who==="self" ? "M-" : "O-") + String(p.disc).padStart(3,'0');
+  const prefix = p.favor ? "F-" : (p.who==="self" ? "M-" : "O-");
+  return prefix + String(p.disc).padStart(3,'0');
+}
+// 10-digit verification number, hand-engraved on the BACK of a favor disc.
+// Collision-free across all existing favors.
+function makeVerifyNumber(){
+  const used = new Set(state.promises.filter(p=>p.verify).map(p=>p.verify));
+  let n;
+  do {
+    n = "";
+    for (let i=0;i<10;i++) n += Math.floor(Math.random()*10);
+  } while (used.has(n));
+  return n;
 }
 
 let state = load();
@@ -383,6 +481,7 @@ let draftWho = "self";
 let draftName = "";
 let draftStanding = false;
 let draftTier = "ordinary";
+let draftFavor = false;
 let showStampList = false;   // "to stamp" worklist view toggle
 
 /* ---------- persistence ---------- */
@@ -488,9 +587,12 @@ function jarSVG(count, max, key){
 /* ---------- render ---------- */
 function render(){
   renderWorklist();
+  // jar counts: non-favor promises only (favors live in their own tab)
   const counts = { open:0, standing:0, kept:0, broken:0 };
-  state.promises.forEach(p => counts[p.status]++);
+  state.promises.forEach(p => { if(!p.favor && counts[p.status]!==undefined) counts[p.status]++; });
   const max = Math.max(1, ...Object.values(counts));
+  const favorCount = state.promises.filter(p=>p.favor).length;
+  const favorOutstanding = state.promises.filter(p=>p.favor && p.status==="outstanding").length;
 
   // jars
   $("#jars").innerHTML = JAR_DEFS.map(j=>{
@@ -507,13 +609,31 @@ function render(){
     el.onclick = ()=>{ activeJar = el.dataset.jar; render(); };
   });
 
+  // favors tab (separate from the four jars)
+  const ft = $("#favorTab");
+  if (ft){
+    ft.className = "favor-tab" + (activeJar==="favors" ? " active" : "");
+    ft.innerHTML = `<span class="ft-label">Favors owed</span>
+      <span class="ft-count">${favorCount}</span>
+      <span class="ft-sub">${favorOutstanding} outstanding</span>`;
+    ft.onclick = ()=>{ activeJar = "favors"; render(); };
+  }
+
   // list
   const q = $("#search").value.trim().toLowerCase();
-  let rows = state.promises
-    .filter(p => p.status === activeJar)
-    .filter(p => whoFilter==="all" ? true : p.who===whoFilter)
-    .filter(p => !q || p.text.toLowerCase().includes(q) || (p.name||"").toLowerCase().includes(q) || ("d"+p.disc).includes(q) || String(p.disc)===q)
-    .sort((a,b)=> b.disc - a.disc);
+  let rows;
+  if (activeJar === "favors"){
+    rows = state.promises
+      .filter(p => p.favor)
+      .filter(p => !q || (p.text||"").toLowerCase().includes(q) || (p.name||"").toLowerCase().includes(q) || (p.verify||"").includes(q) || String(p.disc)===q)
+      .sort((a,b)=> b.disc - a.disc);
+  } else {
+    rows = state.promises
+      .filter(p => !p.favor && p.status === activeJar)
+      .filter(p => whoFilter==="all" ? true : p.who===whoFilter)
+      .filter(p => !q || p.text.toLowerCase().includes(q) || (p.name||"").toLowerCase().includes(q) || ("d"+p.disc).includes(q) || String(p.disc)===q)
+      .sort((a,b)=> b.disc - a.disc);
+  }
 
   const list = $("#list");
   if (rows.length === 0){
@@ -521,25 +641,55 @@ function render(){
       open: "No open promises. Make one — it'll land here.",
       standing: "No standing promises yet. These are the forever ones.",
       kept: "Nothing kept yet. Honor an open promise and it moves here.",
-      broken: "Nothing broken. Long may it stay that way."
+      broken: "Nothing broken. Long may it stay that way.",
+      favors: "No favor tokens yet. Make one to hand out as an IOU."
     };
     list.innerHTML = `<div class="empty">${msgs[activeJar]}</div>`;
     return;
   }
 
   list.innerHTML = rows.map(p=>{
-    const cls = [p.who, p.status==="kept"?"done":"", p.status==="broken"?"broken":""].join(" ");
-    const whoLabel = p.who==="self" ? "to myself"
-                   : (p.name ? "to "+escapeHtml(p.name) : "to someone");
-    const whoTag = `<span class="tag ${p.who}">${whoLabel}</span>`;
-    let dateline = `made ${fmt(p.date_made)}`;
-    if (p.date_closed) dateline += ` · ${p.status} ${fmt(p.date_closed)}`;
-    const reason = p.reason ? `<span class="reason">“${escapeHtml(p.reason)}”</span>` : "";
+    const cls = [p.favor?"favor":p.who, p.status==="kept"?"done":"", p.status==="broken"?"broken":""].join(" ");
     const tier = TIERS[p.tier] || TIERS.ordinary;
     const tierTag = `<span class="metaltag t-${p.tier||'ordinary'}">${tier.metal}</span>`;
     const stampTag = p.stamped
       ? `<span class="stamptag done">stamped</span>`
       : `<span class="stamptag todo">to stamp</span>`;
+    let dateline = `made ${fmt(p.date_made)}`;
+    if (p.date_closed) dateline += ` · ${p.status} ${fmt(p.date_closed)}`;
+    const reason = p.reason ? `<span class="reason">“${escapeHtml(p.reason)}”</span>` : "";
+
+    if (p.favor){
+      // favor / bearer token
+      const stateLabels = { outstanding:"outstanding", redeemed:"redeemed — owe the favor", kept:"done", broken:"broken" };
+      const stateTag = `<span class="favorstate s-${p.status}">${stateLabels[p.status]||p.status}</span>`;
+      const verifyTag = p.verify
+        ? `<span class="verifytag" title="hand-engrave on the back">back: ${p.verify}</span>` : "";
+      const bodyText = p.text ? escapeHtml(p.text)
+        : `<span class="tbd">favor to be decided</span>`;
+      const nameTag = p.name ? `<span class="tag other">given to ${escapeHtml(p.name)}</span>` : `<span class="tag other">bearer token</span>`;
+      return `<div class="entry favor ${p.status==='kept'?'done':''} ${p.status==='broken'?'broken':''}">
+        <div class="spine"></div>
+        <div class="body">
+          <div class="text">${bodyText}</div>
+          <div class="meta">
+            <span class="disc">${discLabel(p)}</span>
+            ${tierTag}
+            ${nameTag}
+            ${stateTag}
+            ${verifyTag}
+            ${stampTag}
+            <span>${dateline}</span>
+            ${reason}
+          </div>
+        </div>
+        <div class="actions">${actionsFor(p)}</div>
+      </div>`;
+    }
+
+    const whoLabel = p.who==="self" ? "to myself"
+                   : (p.name ? "to "+escapeHtml(p.name) : "to someone");
+    const whoTag = `<span class="tag ${p.who}">${whoLabel}</span>`;
     return `<div class="entry ${cls}">
       <div class="spine"></div>
       <div class="body">
@@ -566,6 +716,14 @@ function actionsFor(p){
   const id = p.id;
   const b = (act,label,cls="ghost")=>`<button class="btn ${cls} sm" data-act="${act}" data-id="${id}">${label}</button>`;
   const stampBtn = p.stamped ? b("unstamp","Unstamp") : b("stamp","Mark stamped","gold");
+  if (p.favor){
+    // favor lifecycle: outstanding → redeemed → kept (broken = failed)
+    if (p.status==="outstanding") return stampBtn+b("redeem","Mark redeemed","gold")+b("break","Broke it")+b("edit","Edit");
+    if (p.status==="redeemed")    return stampBtn+b("keep","Favor done ✓","gold")+b("break","Broke it")+b("edit","Edit");
+    if (p.status==="kept")        return stampBtn+b("reopen","Reopen")+b("edit","Edit");
+    if (p.status==="broken")      return stampBtn+b("reopen","Reopen")+b("edit","Edit");
+    return "";
+  }
   if (p.status==="open")     return stampBtn+b("keep","Kept ✓")+b("standing","Make standing")+b("break","Broke it")+b("edit","Edit");
   if (p.status==="standing") return stampBtn+b("break","Let go")+b("edit","Edit");
   if (p.status==="kept")     return stampBtn+b("reopen","Reopen")+b("edit","Edit");
@@ -574,6 +732,112 @@ function actionsFor(p){
 }
 
 function escapeHtml(s){ return s.replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+
+/* ---------- disc maker (front/back stamping guide) ---------- */
+let dmIndex = 0;
+
+// render one face of a disc as an SVG. side = "front" | "back"
+function discFaceSVG(p, side){
+  const tier = TIERS[p.tier] || TIERS.ordinary;
+  const { face, edge, ink } = tier;
+  const label = discLabel(p);
+  const R = 90, cx = 100, cy = 100;
+  // metal disc base: outer edge ring + inner face
+  let inner = `
+    <circle cx="${cx}" cy="${cy}" r="${R}" fill="${edge}"/>
+    <circle cx="${cx}" cy="${cy}" r="${R-7}" fill="${face}"/>
+    <circle cx="${cx}" cy="${cy}" r="${R-7}" fill="none" stroke="rgba(0,0,0,.12)" stroke-width="1.5"/>
+  `;
+  let content = "";
+  if (side === "front"){
+    // big stamped label, centered; maker's mark below for favors
+    content += `<text x="${cx}" y="${p.favor?cy-6:cy+10}" text-anchor="middle"
+      font-family="ui-monospace, monospace" font-size="40" font-weight="700"
+      fill="${ink}" letter-spacing="2">${label}</text>`;
+    if (p.favor){
+      // maker's-mark placeholder (a ring + star glyph) — your custom punch goes here
+      content += `<g transform="translate(${cx},${cy+38})" opacity="0.85">
+        <circle r="16" fill="none" stroke="${ink}" stroke-width="2"/>
+        <path d="M0,-9 L2.6,-2.8 L9,-2.8 L3.9,1.1 L5.9,7.6 L0,3.8 L-5.9,7.6 L-3.9,1.1 L-9,-2.8 L-2.6,-2.8 Z" fill="${ink}"/>
+      </g>
+      <text x="${cx}" y="${cy+70}" text-anchor="middle" font-family="ui-monospace,monospace"
+        font-size="9" fill="${ink}" opacity=".6">maker's mark</text>`;
+    }
+  } else {
+    // back: verification number (favors) or blank
+    if (p.favor && p.verify){
+      content += `<text x="${cx}" y="${cy-6}" text-anchor="middle" font-family="ui-monospace,monospace"
+        font-size="10" fill="${ink}" opacity=".55" letter-spacing="2">VERIFY</text>`;
+      // engrave the 10 digits, slightly hand-wobbled to signal "engraved, not stamped"
+      const digits = p.verify.split("");
+      let dstr = "";
+      digits.forEach((d,i)=>{
+        const x = cx - 67 + i*15;
+        const dy = cy + 14 + (i%2? 2 : -2);     // tiny wobble
+        const rot = (i%3-1)*4;
+        dstr += `<text x="${x}" y="${dy}" text-anchor="middle" font-family="'Comic Sans MS',cursive,monospace"
+          font-size="17" fill="${ink}" transform="rotate(${rot} ${x} ${dy})">${d}</text>`;
+      });
+      content += dstr;
+      content += `<text x="${cx}" y="${cy+52}" text-anchor="middle" font-family="ui-monospace,monospace"
+        font-size="9" fill="${ink}" opacity=".55">hand-engrave</text>`;
+    } else {
+      content += `<text x="${cx}" y="${cy+6}" text-anchor="middle" font-family="ui-monospace,monospace"
+        font-size="12" fill="${ink}" opacity=".4">(blank back)</text>`;
+    }
+  }
+  return `<svg viewBox="0 0 200 200" width="150" height="150" xmlns="http://www.w3.org/2000/svg">
+    ${inner}${content}
+  </svg>`;
+}
+
+function discMakerList(){
+  return state.promises.filter(p=>!p.stamped).sort((a,b)=>a.disc-b.disc);
+}
+function openDiscMaker(){
+  dmIndex = 0;
+  renderDiscMaker();
+  $("#discScrim").classList.add("open");
+}
+function closeDiscMaker(){ $("#discScrim").classList.remove("open"); }
+function renderDiscMaker(){
+  const pending = discMakerList();
+  const stage = $("#dmStage");
+  if (pending.length === 0){
+    $("#dmTitle").textContent = "All discs made";
+    $("#dmProgress").textContent = "";
+    stage.innerHTML = `<div class="dm-empty">Nothing waiting to be stamped. Every promise has its disc.</div>`;
+    $("#dmInstructions").innerHTML = "";
+    $("#dmPrev").style.display = $("#dmNext").style.display = $("#dmStamped").style.display = "none";
+    return;
+  }
+  $("#dmPrev").style.display = $("#dmNext").style.display = $("#dmStamped").style.display = "";
+  if (dmIndex >= pending.length) dmIndex = pending.length-1;
+  if (dmIndex < 0) dmIndex = 0;
+  const p = pending[dmIndex];
+  const tier = TIERS[p.tier] || TIERS.ordinary;
+
+  $("#dmTitle").textContent = "Make disc " + discLabel(p);
+  $("#dmProgress").textContent = (dmIndex+1) + " of " + pending.length;
+
+  stage.innerHTML = `
+    <div class="dm-face"><div>${discFaceSVG(p,"front")}</div><div class="dm-side">front</div></div>
+    <div class="dm-face"><div>${discFaceSVG(p,"back")}</div><div class="dm-side">back</div></div>`;
+
+  // instructions
+  let steps = [`Take an <span class="hl">${tier.metal}</span> blank (${tier.label.toLowerCase()} weight).`];
+  steps.push(`Stamp the front: <span class="hl">${discLabel(p)}</span>.`);
+  if (p.favor){
+    steps.push(`Stamp your <span class="hl">maker's mark</span> below the label.`);
+    steps.push(`Hand-engrave on the back: <span class="hl">${p.verify}</span>.`);
+    steps.push(`Ink the grooves, wipe the face. Hand it out as an IOU.`);
+  } else {
+    steps.push(`Ink the stamped grooves, wipe the face.`);
+    steps.push(`Drop it in the <span class="hl">${p.favor?'':capitalize(p.status)}</span> jar.`);
+  }
+  $("#dmInstructions").innerHTML = "<ol>"+steps.map(s=>`<li>${s}</li>`).join("")+"</ol>";
+}
+function capitalize(s){ return (s||"").charAt(0).toUpperCase()+(s||"").slice(1); }
 
 /* ---------- unstamped worklist ---------- */
 function unstampedPromises(){
@@ -595,10 +859,13 @@ function renderWorklist(){
     : pending.length + " discs waiting to be stamped";
   $("#wlItems").innerHTML = pending.map(p=>{
     const tier = TIERS[p.tier] || TIERS.ordinary;
+    const txt = p.favor
+      ? (p.text ? escapeHtml(p.text) : "favor (TBD)") + (p.verify ? ` · back: ${p.verify}` : "")
+      : escapeHtml(p.text);
     return `<div class="wl-row">
       <span class="wl-disc">${discLabel(p)}</span>
       <span class="wl-metal">${tier.metal}</span>
-      <span class="wl-text">${escapeHtml(p.text)}</span>
+      <span class="wl-text">${txt}</span>
     </div>`;
   }).join("");
 }
@@ -608,13 +875,35 @@ function renderWorklist(){
 function doAction(act, id){
   const p = state.promises.find(x=>x.id===id);
   if (!p) return;
-  if (act==="keep"){ p.status="kept"; p.date_closed=now(); p.reason=""; save(); toast("Kept. Moved to the Kept jar."); }
+  if (act==="keep"){
+    p.status="kept"; p.date_closed=now(); p.reason="";
+    save(); toast(p.favor ? "Favor done." : "Kept. Moved to the Kept jar.");
+  }
   else if (act==="standing"){ p.status="standing"; p.date_closed=null; p.reason=""; save(); toast("Now a standing promise."); }
   else if (act==="break"){
     const why = prompt("Why did this one break? (kept for your own learning — optional)") || "";
     p.status="broken"; p.date_closed=now(); p.reason=why.trim(); save(); toast("Marked broken.");
   }
-  else if (act==="reopen"){ p.status="open"; p.date_closed=null; p.reason=""; save(); toast("Reopened."); }
+  else if (act==="redeem"){
+    // verify the hand-engraved 10-digit number on the back before redeeming
+    if (p.verify){
+      const entered = prompt("Read the 10-digit number engraved on the BACK of the disc to verify it's genuine:");
+      if (entered === null) return;           // cancelled
+      const cleaned = entered.replace(/\D/g,'');
+      if (cleaned !== p.verify){
+        toast("⚠ Number doesn't match — this token may be a forgery.");
+        return;
+      }
+    }
+    p.status="redeemed"; p.date_redeemed=now();
+    save(); toast("Verified & redeemed. You now owe this favor.");
+  }
+  else if (act==="reopen"){
+    // favors return to outstanding; normal promises to open
+    p.status = p.favor ? "outstanding" : "open";
+    p.date_closed=null; p.date_redeemed=null; p.reason="";
+    save(); toast("Reopened.");
+  }
   else if (act==="stamp"){ p.stamped=true; save(); toast("Marked stamped — disc "+discLabel(p)+"."); }
   else if (act==="unstamp"){ p.stamped=false; save(); toast("Marked as not yet stamped."); }
   else if (act==="edit"){ openSheet(p); }
@@ -623,53 +912,104 @@ function doAction(act, id){
 /* ---------- add / edit sheet ---------- */
 function openSheet(p=null){
   editingId = p ? p.id : null;
-  $("#sheetTitle").textContent = p ? "Edit promise" : "Make a promise";
-  $("#fText").value = p ? p.text : "";
+  draftFavor = p ? !!p.favor : false;
+  $("#sheetTitle").textContent = p ? (p.favor?"Edit favor token":"Edit promise") : "Make a promise";
+  $("#fText").value = p ? (p.text||"") : "";
   draftWho = p ? p.who : "self";
   draftName = p ? (p.name || "") : "";
   $("#fName").value = draftName;
   draftStanding = p ? (p.status==="standing") : false;
   draftTier = p ? (p.tier || "ordinary") : "ordinary";
-  // standing toggle only meaningful for open/standing items
-  const lockStanding = p && (p.status==="kept" || p.status==="broken");
-  $("#standingField").style.display = lockStanding ? "none" : "block";
+  if (draftFavor && draftTier==="standing") draftTier="serious"; // favors can't be standing
+  // lock structural toggles once a promise is closed
+  const locked = p && (p.status==="kept" || p.status==="broken" || p.status==="redeemed");
+  $("#favorField").style.display = locked ? "none" : "block";
+  $("#standingField").style.display = (locked || draftFavor) ? "none" : "block";
   paintSeg();
   $("#scrim").classList.add("open");
   $("#fText").focus();
 }
 function paintSeg(){
+  // favor toggle
+  $("#fFavor").querySelectorAll("button").forEach(b=>{
+    b.classList.toggle("on", (b.dataset.favor==="true")===draftFavor);
+  });
   $("#fWho").querySelectorAll("button").forEach(b=>{
     b.classList.toggle("on", b.dataset.who===draftWho);
   });
   $("#fStanding").querySelectorAll("button").forEach(b=>{
     b.classList.toggle("on", (b.dataset.standing==="true")===draftStanding);
   });
-  // the name field only matters for promises to someone else
-  $("#nameField").style.display = draftWho==="other" ? "block" : "none";
   $("#fTier").querySelectorAll("button").forEach(b=>{
     b.classList.toggle("on", b.dataset.tier===draftTier);
   });
+
+  // favor mode reshapes the form
+  if (draftFavor){
+    // favors are always "to someone" (a bearer token), weight regular/serious only
+    draftWho = "other";
+    $("#whoField").style.display = "none";
+    $("#standingField").style.display = "none";
+    $("#tierStandingBtn").style.display = "none";   // hide the copper/standing weight option
+    $("#nameField").style.display = "block";
+    $("#nameLabel").textContent = "Given to (optional — it's a transferable bearer token)";
+    $("#fName").placeholder = "e.g. Jordan — or leave blank";
+    $("#textLabel").textContent = "The favor (optional — fill in now or later)";
+    $("#fText").placeholder = "e.g. help moving — or leave blank for a nebulous favor";
+  } else {
+    $("#whoField").style.display = "block";
+    $("#tierStandingBtn").style.display = "";
+    $("#nameField").style.display = draftWho==="other" ? "block" : "none";
+    $("#nameLabel").textContent = "Their name";
+    $("#fName").placeholder = "e.g. Mom, Jordan, the team…";
+    $("#textLabel").textContent = "The promise";
+    $("#fText").placeholder = "What are you binding yourself to?";
+  }
 }
 function closeSheet(){ $("#scrim").classList.remove("open"); editingId=null; }
 
 function saveDraft(){
   const text = $("#fText").value.trim();
-  if (!text){ toast("Write the promise first."); return; }
-  // name only kept for promises to someone else
-  const name = draftWho==="other" ? $("#fName").value.trim() : "";
+  // favors may have empty text (nebulous); normal promises must have text
+  if (!draftFavor && !text){ toast("Write the promise first."); return; }
+  const name = (draftFavor || draftWho==="other") ? $("#fName").value.trim() : "";
+  let tier = draftTier;
+  if (draftFavor && tier==="standing") tier = "serious";  // safety: no standing favors
+
   if (editingId){
     const p = state.promises.find(x=>x.id===editingId);
-    p.text = text; p.who = draftWho; p.name = name; p.tier = draftTier;
-    if (p.status==="open" || p.status==="standing"){
-      p.status = draftStanding ? "standing" : "open";
-      if (p.status!=="broken") p.date_closed = null;
+    p.text = text; p.name = name; p.tier = tier;
+    if (p.favor){
+      // keep favor identity; only structural status changes handled elsewhere
+    } else {
+      p.who = draftWho;
+      if (p.status==="open" || p.status==="standing"){
+        p.status = draftStanding ? "standing" : "open";
+        if (p.status!=="broken") p.date_closed = null;
+      }
     }
     save(); toast("Updated.");
+  } else if (draftFavor){
+    const verify = makeVerifyNumber();
+    state.promises.push({
+      id: crypto.randomUUID(),
+      disc: state.nextDisc++,
+      favor: true,
+      text, who: "other", name, tier,
+      status: "outstanding",
+      verify,                       // 10-digit, engrave on the back
+      stamped: false,
+      date_made: now(), date_redeemed: null, date_closed: null, reason: ""
+    });
+    activeJar = "favors";
+    const np = state.promises[state.promises.length-1];
+    save();
+    toast("Favor token "+discLabel(np)+" — stamp front, engrave "+verify+" on back.");
   } else {
     state.promises.push({
       id: crypto.randomUUID(),
       disc: state.nextDisc++,
-      text, who: draftWho, name, tier: draftTier,
+      text, who: draftWho, name, tier,
       status: draftStanding ? "standing" : "open",
       stamped: false,
       date_made: now(), date_closed: null, reason: ""
@@ -751,16 +1091,18 @@ function exportJSON(){
 }
 function exportEngraving(){
   // one row per disc — what a stamping/engraving job needs
-  const rows = [["disc_stamp","metal","stamp_text","status","to","recipient","stamped","date_made"]];
+  const rows = [["disc_stamp","is_favor","metal","front_text","verify_back","status","to","recipient","stamped","date_made"]];
   state.promises.slice().sort((a,b)=>a.disc-b.disc).forEach(p=>{
     const tier = TIERS[p.tier] || TIERS.ordinary;
     rows.push([
       discLabel(p),
+      p.favor ? "FAVOR" : "",
       tier.metal,
-      p.text.replace(/\s+/g,' ').slice(0,40),
-      p.status, p.who, p.name||"",
+      (p.text||"").replace(/\s+/g,' ').slice(0,40),
+      p.verify || "",
+      p.status, p.who||"", p.name||"",
       p.stamped ? "yes" : "no",
-      p.date_made.slice(0,10)
+      (p.date_made||"").slice(0,10)
     ]);
   });
   const csv = rows.map(r=>r.map(c=>`"${String(c).replace(/"/g,'""')}"`).join(",")).join("\n");
@@ -788,6 +1130,7 @@ $("#saveBtn").onclick = saveDraft;
 $("#scrim").onclick = e=>{ if(e.target===$("#scrim")) closeSheet(); };
 $("#fWho").onclick = e=>{ if(e.target.dataset.who){ draftWho=e.target.dataset.who; paintSeg(); } };
 $("#fStanding").onclick = e=>{ if(e.target.dataset.standing){ draftStanding=e.target.dataset.standing==="true"; paintSeg(); } };
+$("#fFavor").onclick = e=>{ if(e.target.dataset.favor){ draftFavor=e.target.dataset.favor==="true"; if(draftFavor&&draftTier==="standing")draftTier="serious"; paintSeg(); } };
 $("#fTier").onclick = e=>{ if(e.target.dataset.tier){ draftTier=e.target.dataset.tier; paintSeg(); } };
 $("#search").oninput = render;
 document.querySelectorAll(".chip[data-who]").forEach(c=>{
@@ -812,6 +1155,22 @@ $("#wlToggle").onclick = ()=>{
   const wl = $("#worklist");
   wl.classList.toggle("open");
   $("#wlToggle").textContent = wl.classList.contains("open") ? "Hide" : "Show";
+};
+
+// disc maker
+$("#makeDiscsBtn").onclick = openDiscMaker;
+$("#dmClose").onclick = closeDiscMaker;
+$("#discScrim").onclick = e=>{ if(e.target===$("#discScrim")) closeDiscMaker(); };
+$("#dmPrev").onclick = ()=>{ dmIndex--; renderDiscMaker(); };
+$("#dmNext").onclick = ()=>{ dmIndex++; renderDiscMaker(); };
+$("#dmStamped").onclick = ()=>{
+  const pending = discMakerList();
+  const p = pending[dmIndex];
+  if (!p) return;
+  p.stamped = true;
+  save();                 // re-renders main list + worklist
+  renderDiscMaker();      // advances: the stamped one drops out, next slides in
+  toast("Disc "+discLabel(p)+" marked stamped.");
 };
 
 /* ---------- end-of-day stamping reminder ---------- */
