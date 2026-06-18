@@ -37,6 +37,12 @@ and lives in one of four **jars**.
 - **Green spine / tag** = a promise **to yourself**
 - **Purple spine / tag** = a promise **to someone else**
 
+When a promise is to someone else, you can also record **their name** (e.g. "to
+Mom", "to Jordan"). The name shows on the entry's tag, and you can **search by
+it** to pull up every promise made to a given person. Promises to yourself don't
+use a name; if you mark a promise as "to someone else" but leave the name blank,
+it just reads "to someone."
+
 This is independent of the jar, so a glance at any jar shows the balance of who
 you're showing up for.
 
@@ -150,6 +156,7 @@ never included unless you also send them your `.json`.
   disc        integer (auto-increment, never reused)
   text        string
   who         "self" | "other"
+  name        string                 (recipient's name; only for "other")
   status      "open" | "standing" | "kept" | "broken"
   date_made   ISO timestamp
   date_closed ISO timestamp | null   (set on kept/broken)
