@@ -285,6 +285,10 @@
         <button data-who="other" class="other">To someone else</button>
       </div>
     </div>
+    <div class="field" id="nameField" style="display:none;">
+      <label>Their name</label>
+      <input type="text" id="fName" placeholder="e.g. Mom, Jordan, the team…" autocomplete="off">
+    </div>
     <div class="field" id="standingField">
       <label>Kind</label>
       <div class="seg" id="fStanding">
@@ -318,6 +322,7 @@ let activeJar = "open";
 let whoFilter = "all";
 let editingId = null;
 let draftWho = "self";
+let draftName = "";
 let draftStanding = false;
 
 /* ---------- persistence ---------- */
@@ -446,7 +451,7 @@ function render(){
   let rows = state.promises
     .filter(p => p.status === activeJar)
     .filter(p => whoFilter==="all" ? true : p.who===whoFilter)
-    .filter(p => !q || p.text.toLowerCase().includes(q) || ("d"+p.disc).includes(q) || String(p.disc)===q)
+    .filter(p => !q || p.text.toLowerCase().includes(q) || (p.name||"").toLowerCase().includes(q) || ("d"+p.disc).includes(q) || String(p.disc)===q)
     .sort((a,b)=> b.disc - a.disc);
 
   const list = $("#list");
@@ -463,7 +468,9 @@ function render(){
 
   list.innerHTML = rows.map(p=>{
     const cls = [p.who, p.status==="kept"?"done":"", p.status==="broken"?"broken":""].join(" ");
-    const whoTag = `<span class="tag ${p.who}">${p.who==="self"?"to myself":"to someone"}</span>`;
+    const whoLabel = p.who==="self" ? "to myself"
+                   : (p.name ? "to "+escapeHtml(p.name) : "to someone");
+    const whoTag = `<span class="tag ${p.who}">${whoLabel}</span>`;
     let dateline = `made ${fmt(p.date_made)}`;
     if (p.date_closed) dateline += ` · ${p.status} ${fmt(p.date_closed)}`;
     const reason = p.reason ? `<span class="reason">“${escapeHtml(p.reason)}”</span>` : "";
@@ -519,6 +526,8 @@ function openSheet(p=null){
   $("#sheetTitle").textContent = p ? "Edit promise" : "Make a promise";
   $("#fText").value = p ? p.text : "";
   draftWho = p ? p.who : "self";
+  draftName = p ? (p.name || "") : "";
+  $("#fName").value = draftName;
   draftStanding = p ? (p.status==="standing") : false;
   // standing toggle only meaningful for open/standing items
   const lockStanding = p && (p.status==="kept" || p.status==="broken");
@@ -534,15 +543,19 @@ function paintSeg(){
   $("#fStanding").querySelectorAll("button").forEach(b=>{
     b.classList.toggle("on", (b.dataset.standing==="true")===draftStanding);
   });
+  // the name field only matters for promises to someone else
+  $("#nameField").style.display = draftWho==="other" ? "block" : "none";
 }
 function closeSheet(){ $("#scrim").classList.remove("open"); editingId=null; }
 
 function saveDraft(){
   const text = $("#fText").value.trim();
   if (!text){ toast("Write the promise first."); return; }
+  // name only kept for promises to someone else
+  const name = draftWho==="other" ? $("#fName").value.trim() : "";
   if (editingId){
     const p = state.promises.find(x=>x.id===editingId);
-    p.text = text; p.who = draftWho;
+    p.text = text; p.who = draftWho; p.name = name;
     if (p.status==="open" || p.status==="standing"){
       p.status = draftStanding ? "standing" : "open";
       if (p.status!=="broken") p.date_closed = null;
@@ -552,7 +565,7 @@ function saveDraft(){
     state.promises.push({
       id: crypto.randomUUID(),
       disc: state.nextDisc++,
-      text, who: draftWho,
+      text, who: draftWho, name,
       status: draftStanding ? "standing" : "open",
       date_made: now(), date_closed: null, reason: ""
     });
@@ -632,12 +645,12 @@ function exportJSON(){
 }
 function exportEngraving(){
   // one row per disc — what a stamping/engraving job needs
-  const rows = [["disc","stamp_text","status","to","date_made"]];
+  const rows = [["disc","stamp_text","status","to","recipient","date_made"]];
   state.promises.slice().sort((a,b)=>a.disc-b.disc).forEach(p=>{
     rows.push([
       "D"+String(p.disc).padStart(3,'0'),
       p.text.replace(/\s+/g,' ').slice(0,40),
-      p.status, p.who, p.date_made.slice(0,10)
+      p.status, p.who, p.name||"", p.date_made.slice(0,10)
     ]);
   });
   const csv = rows.map(r=>r.map(c=>`"${String(c).replace(/"/g,'""')}"`).join(",")).join("\n");
