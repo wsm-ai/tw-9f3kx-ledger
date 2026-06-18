@@ -136,7 +136,36 @@
   .tag { padding: 1px 8px; border-radius: 9px; border: 1px solid; font-size: 10px; text-transform: uppercase; letter-spacing: .1em; }
   .tag.self  { color: var(--self);  border-color: var(--self-dim); }
   .tag.other { color: var(--other); border-color: var(--other-dim); }
+  .metaltag { padding: 1px 8px; border-radius: 9px; border: 1px solid; font-size: 10px; text-transform: uppercase; letter-spacing: .08em; }
+  .metaltag.t-ordinary { color: #b9b2a6; border-color: #6e675c; }      /* aluminum */
+  .metaltag.t-serious  { color: #cb9b54; border-color: #7a5e2a; }      /* brass */
+  .metaltag.t-standing { color: #c07a52; border-color: #7d4a30; }      /* copper */
+  .stamptag { padding: 1px 8px; border-radius: 9px; border: 1px solid; font-size: 10px; text-transform: uppercase; letter-spacing: .1em; }
+  .stamptag.done { color: var(--self); border-color: var(--self-dim); }
+  .stamptag.todo { color: var(--gold); border-color: rgba(201,162,75,.55); background: rgba(201,162,75,.08); }
   .reason { color: var(--broken); font-style: italic; }
+
+  /* unstamped worklist banner */
+  .worklist {
+    margin: 14px 0 0; border: 1px solid rgba(201,162,75,.45);
+    background: rgba(201,162,75,.08); border-radius: var(--r); padding: 12px 14px;
+    display: none;
+  }
+  .worklist.show { display: block; }
+  .worklist .wl-head {
+    display: flex; align-items: center; justify-content: space-between; gap: 10px;
+    cursor: pointer;
+  }
+  .worklist .wl-title { font-weight: 600; color: var(--gold); font-size: 15px; }
+  .worklist .wl-items { margin-top: 10px; display: none; flex-direction: column; gap: 6px; }
+  .worklist.open .wl-items { display: flex; }
+  .wl-row {
+    display: flex; align-items: center; gap: 10px; font-family: ui-monospace, monospace;
+    font-size: 12px; padding: 6px 8px; background: rgba(255,255,255,.03); border-radius: 8px;
+  }
+  .wl-row .wl-disc { color: var(--gold); font-weight: 600; min-width: 56px; }
+  .wl-row .wl-metal { color: var(--paper-dim); min-width: 70px; }
+  .wl-row .wl-text { color: var(--paper); flex: 1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
   .entry .actions {
     display: flex; flex-direction: column; gap: 6px; padding: 11px 12px 11px 0;
     justify-content: center; align-items: stretch;
@@ -240,6 +269,15 @@
   <section class="jars" id="jars"></section>
   <p class="hint" id="loadHint">Tap a jar to see what's inside.</p>
 
+  <!-- UNSTAMPED WORKLIST -->
+  <div class="worklist" id="worklist">
+    <div class="wl-head" id="wlHead">
+      <span class="wl-title" id="wlTitle">Discs waiting to be stamped</span>
+      <button class="btn ghost sm" id="wlToggle">Show</button>
+    </div>
+    <div class="wl-items" id="wlItems"></div>
+  </div>
+
   <!-- TOOLBAR -->
   <div class="toolbar">
     <div class="grow"><input type="search" id="search" placeholder="Search promises…"></div>
@@ -297,6 +335,14 @@
         <button data-standing="true" class="other">Standing — never finished</button>
       </div>
     </div>
+    <div class="field">
+      <label>Weight — which metal you'll stamp it in</label>
+      <div class="seg seg3" id="fTier">
+        <button data-tier="ordinary" class="on">Ordinary · Aluminum</button>
+        <button data-tier="serious">Serious · Brass</button>
+        <button data-tier="standing">Standing · Copper</button>
+      </div>
+    </div>
     <div class="sheet-actions">
       <button class="btn ghost" id="cancelBtn">Cancel</button>
       <button class="btn gold" id="saveBtn">Bind it</button>
@@ -318,6 +364,17 @@ const STORE_KEY = "the_weight_ledger_v1";
 const WEIGHTS = { open: 1, standing: 3, kept: 1, broken: 1 }; // symbolic grams per disc
 const DISC_GRAMS = 7; // a stamped aluminum-ish disc
 
+// weight tiers → which metal to stamp the disc in
+const TIERS = {
+  ordinary: { label: "Ordinary",  metal: "Aluminum" },
+  serious:  { label: "Serious",   metal: "Brass" },
+  standing: { label: "Standing",  metal: "Copper" }
+};
+// disc label as you stamp it: M-047 (to myself) / O-047 (to someone)
+function discLabel(p){
+  return (p.who==="self" ? "M-" : "O-") + String(p.disc).padStart(3,'0');
+}
+
 let state = load();
 let activeJar = "open";
 let whoFilter = "all";
@@ -325,6 +382,8 @@ let editingId = null;
 let draftWho = "self";
 let draftName = "";
 let draftStanding = false;
+let draftTier = "ordinary";
+let showStampList = false;   // "to stamp" worklist view toggle
 
 /* ---------- persistence ---------- */
 let fileHandle = null;      // linked cloud-folder file (File System Access API)
@@ -428,6 +487,7 @@ function jarSVG(count, max, key){
 
 /* ---------- render ---------- */
 function render(){
+  renderWorklist();
   const counts = { open:0, standing:0, kept:0, broken:0 };
   state.promises.forEach(p => counts[p.status]++);
   const max = Math.max(1, ...Object.values(counts));
@@ -475,13 +535,20 @@ function render(){
     let dateline = `made ${fmt(p.date_made)}`;
     if (p.date_closed) dateline += ` · ${p.status} ${fmt(p.date_closed)}`;
     const reason = p.reason ? `<span class="reason">“${escapeHtml(p.reason)}”</span>` : "";
+    const tier = TIERS[p.tier] || TIERS.ordinary;
+    const tierTag = `<span class="metaltag t-${p.tier||'ordinary'}">${tier.metal}</span>`;
+    const stampTag = p.stamped
+      ? `<span class="stamptag done">stamped</span>`
+      : `<span class="stamptag todo">to stamp</span>`;
     return `<div class="entry ${cls}">
       <div class="spine"></div>
       <div class="body">
         <div class="text">${escapeHtml(p.text)}</div>
         <div class="meta">
-          <span class="disc">D${String(p.disc).padStart(3,'0')}</span>
+          <span class="disc">${discLabel(p)}</span>
+          ${tierTag}
           ${whoTag}
+          ${stampTag}
           <span>${dateline}</span>
           ${reason}
         </div>
@@ -498,14 +565,44 @@ function render(){
 function actionsFor(p){
   const id = p.id;
   const b = (act,label,cls="ghost")=>`<button class="btn ${cls} sm" data-act="${act}" data-id="${id}">${label}</button>`;
-  if (p.status==="open")     return b("keep","Kept ✓","gold")+b("standing","Make standing")+b("break","Broke it")+b("edit","Edit");
-  if (p.status==="standing") return b("break","Let go")+b("edit","Edit");
-  if (p.status==="kept")     return b("reopen","Reopen")+b("edit","Edit");
-  if (p.status==="broken")   return b("reopen","Reopen")+b("edit","Edit");
+  const stampBtn = p.stamped ? b("unstamp","Unstamp") : b("stamp","Mark stamped","gold");
+  if (p.status==="open")     return stampBtn+b("keep","Kept ✓")+b("standing","Make standing")+b("break","Broke it")+b("edit","Edit");
+  if (p.status==="standing") return stampBtn+b("break","Let go")+b("edit","Edit");
+  if (p.status==="kept")     return stampBtn+b("reopen","Reopen")+b("edit","Edit");
+  if (p.status==="broken")   return stampBtn+b("reopen","Reopen")+b("edit","Edit");
   return "";
 }
 
 function escapeHtml(s){ return s.replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+
+/* ---------- unstamped worklist ---------- */
+function unstampedPromises(){
+  // anything not yet stamped and not broken (no point stamping a disc you're discarding... 
+  // but keep broken out only if never stamped; user can still stamp if they want a record)
+  return state.promises.filter(p => !p.stamped).sort((a,b)=>a.disc-b.disc);
+}
+function renderWorklist(){
+  const pending = unstampedPromises();
+  const wl = $("#worklist");
+  if (!wl) return;
+  if (pending.length === 0){
+    wl.classList.remove("show");
+    return;
+  }
+  wl.classList.add("show");
+  $("#wlTitle").textContent = pending.length === 1
+    ? "1 disc waiting to be stamped"
+    : pending.length + " discs waiting to be stamped";
+  $("#wlItems").innerHTML = pending.map(p=>{
+    const tier = TIERS[p.tier] || TIERS.ordinary;
+    return `<div class="wl-row">
+      <span class="wl-disc">${discLabel(p)}</span>
+      <span class="wl-metal">${tier.metal}</span>
+      <span class="wl-text">${escapeHtml(p.text)}</span>
+    </div>`;
+  }).join("");
+}
+
 
 /* ---------- actions ---------- */
 function doAction(act, id){
@@ -518,6 +615,8 @@ function doAction(act, id){
     p.status="broken"; p.date_closed=now(); p.reason=why.trim(); save(); toast("Marked broken.");
   }
   else if (act==="reopen"){ p.status="open"; p.date_closed=null; p.reason=""; save(); toast("Reopened."); }
+  else if (act==="stamp"){ p.stamped=true; save(); toast("Marked stamped — disc "+discLabel(p)+"."); }
+  else if (act==="unstamp"){ p.stamped=false; save(); toast("Marked as not yet stamped."); }
   else if (act==="edit"){ openSheet(p); }
 }
 
@@ -530,6 +629,7 @@ function openSheet(p=null){
   draftName = p ? (p.name || "") : "";
   $("#fName").value = draftName;
   draftStanding = p ? (p.status==="standing") : false;
+  draftTier = p ? (p.tier || "ordinary") : "ordinary";
   // standing toggle only meaningful for open/standing items
   const lockStanding = p && (p.status==="kept" || p.status==="broken");
   $("#standingField").style.display = lockStanding ? "none" : "block";
@@ -546,6 +646,9 @@ function paintSeg(){
   });
   // the name field only matters for promises to someone else
   $("#nameField").style.display = draftWho==="other" ? "block" : "none";
+  $("#fTier").querySelectorAll("button").forEach(b=>{
+    b.classList.toggle("on", b.dataset.tier===draftTier);
+  });
 }
 function closeSheet(){ $("#scrim").classList.remove("open"); editingId=null; }
 
@@ -556,7 +659,7 @@ function saveDraft(){
   const name = draftWho==="other" ? $("#fName").value.trim() : "";
   if (editingId){
     const p = state.promises.find(x=>x.id===editingId);
-    p.text = text; p.who = draftWho; p.name = name;
+    p.text = text; p.who = draftWho; p.name = name; p.tier = draftTier;
     if (p.status==="open" || p.status==="standing"){
       p.status = draftStanding ? "standing" : "open";
       if (p.status!=="broken") p.date_closed = null;
@@ -566,12 +669,14 @@ function saveDraft(){
     state.promises.push({
       id: crypto.randomUUID(),
       disc: state.nextDisc++,
-      text, who: draftWho, name,
+      text, who: draftWho, name, tier: draftTier,
       status: draftStanding ? "standing" : "open",
+      stamped: false,
       date_made: now(), date_closed: null, reason: ""
     });
     activeJar = draftStanding ? "standing" : "open";
-    save(); toast("Bound. Disc D"+String(state.nextDisc-1).padStart(3,'0')+".");
+    const np = state.promises[state.promises.length-1];
+    save(); toast("Bound. Stamp disc "+discLabel(np)+" in "+TIERS[np.tier].metal+".");
   }
   closeSheet();
 }
@@ -646,12 +751,16 @@ function exportJSON(){
 }
 function exportEngraving(){
   // one row per disc — what a stamping/engraving job needs
-  const rows = [["disc","stamp_text","status","to","recipient","date_made"]];
+  const rows = [["disc_stamp","metal","stamp_text","status","to","recipient","stamped","date_made"]];
   state.promises.slice().sort((a,b)=>a.disc-b.disc).forEach(p=>{
+    const tier = TIERS[p.tier] || TIERS.ordinary;
     rows.push([
-      "D"+String(p.disc).padStart(3,'0'),
+      discLabel(p),
+      tier.metal,
       p.text.replace(/\s+/g,' ').slice(0,40),
-      p.status, p.who, p.name||"", p.date_made.slice(0,10)
+      p.status, p.who, p.name||"",
+      p.stamped ? "yes" : "no",
+      p.date_made.slice(0,10)
     ]);
   });
   const csv = rows.map(r=>r.map(c=>`"${String(c).replace(/"/g,'""')}"`).join(",")).join("\n");
@@ -679,6 +788,7 @@ $("#saveBtn").onclick = saveDraft;
 $("#scrim").onclick = e=>{ if(e.target===$("#scrim")) closeSheet(); };
 $("#fWho").onclick = e=>{ if(e.target.dataset.who){ draftWho=e.target.dataset.who; paintSeg(); } };
 $("#fStanding").onclick = e=>{ if(e.target.dataset.standing){ draftStanding=e.target.dataset.standing==="true"; paintSeg(); } };
+$("#fTier").onclick = e=>{ if(e.target.dataset.tier){ draftTier=e.target.dataset.tier; paintSeg(); } };
 $("#search").oninput = render;
 document.querySelectorAll(".chip[data-who]").forEach(c=>{
   c.onclick = ()=>{ whoFilter=c.dataset.who;
@@ -697,17 +807,60 @@ $("#importBtn").onclick = ()=> $("#importFile").click();
 $("#importFile").onchange = e=>{ if(e.target.files[0]) importJSON(e.target.files[0]); e.target.value=""; };
 document.addEventListener("keydown", e=>{ if(e.key==="Escape") closeSheet(); });
 
-// register a no-op service worker from a blob so it's installable offline
+// worklist expand/collapse
+$("#wlToggle").onclick = ()=>{
+  const wl = $("#worklist");
+  wl.classList.toggle("open");
+  $("#wlToggle").textContent = wl.classList.contains("open") ? "Hide" : "Show";
+};
+
+/* ---------- end-of-day stamping reminder ---------- */
+// Best-effort: when the app is open at/after the reminder hour and there are
+// unstamped discs, show a notification (if permitted) once per day.
+const REMINDER_HOUR = 20; // 8 PM local
+function reminderKey(){ return "tw_reminded_" + new Date().toISOString().slice(0,10); }
+function maybeRemind(){
+  const pending = unstampedPromises().length;
+  if (pending === 0) return;
+  const h = new Date().getHours();
+  if (h < REMINDER_HOUR) return;
+  if (localStorage.getItem(reminderKey())) return;   // already reminded today
+  const msg = pending===1
+    ? "1 promise still needs its disc stamped."
+    : pending+" promises still need their discs stamped.";
+  localStorage.setItem(reminderKey(), "1");
+  // try a real notification; fall back to the in-app toast
+  if ("Notification" in window && Notification.permission === "granted"){
+    try { new Notification("The Weight", { body: msg, icon: "icon-192.png" }); }
+    catch(e){ toast(msg); }
+  } else {
+    toast(msg);
+  }
+}
+// ask permission once, gently, the first time there's anything to stamp
+function offerNotifications(){
+  if (!("Notification" in window)) return;
+  if (Notification.permission === "default" && unstampedPromises().length>0){
+    Notification.requestPermission().catch(()=>{});
+  }
+}
+
+// register a no-op service worker so the app is installable / works offline
 if ("serviceWorker" in navigator) {
-  const sw = `self.addEventListener("install",e=>self.skipWaiting());
-self.addEventListener("activate",e=>self.clients.claim());
-self.addEventListener("fetch",e=>{});`;
-  const url = URL.createObjectURL(new Blob([sw],{type:"text/javascript"}));
-  navigator.serviceWorker.register(url).catch(()=>{});
+  navigator.serviceWorker.register("sw.js").catch(()=>{});
 }
 
 render();
 updateSyncBadge();
+offerNotifications();
+maybeRemind();
+// re-check the reminder when the app regains focus (e.g. you open it in the evening)
+document.addEventListener("visibilitychange", ()=>{
+  if (document.visibilityState === "visible") maybeRemind();
+});
+// and check periodically while open, so it can fire if you cross 8 PM with the app up
+setInterval(maybeRemind, 5*60*1000);
+
 </script>
 
 </body>

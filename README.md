@@ -64,18 +64,52 @@ add weighted filler — metal discs alone are light.
 ## The discs
 
 Every promise is assigned an auto-incrementing disc number the moment you make
-it: **D001, D002, …**. That number is the bridge between the app and the physical
-token:
+it. The disc is labelled with **who it's to + the number**, so you stamp it
+directly:
 
-1. Make the promise in the app → it gets a disc number.
-2. Stamp/engrave that number (and optionally a short keyword) on the metal disc.
-3. Drop the disc in the matching jar.
-4. The full text, dates, recipient, and history live in the app, indexed by the number.
+- **`M-047`** — a promise **to myself** (M = me), disc 47
+- **`O-047`** — a promise **to someone else** (O = other), disc 47
 
-**Export discs for engraving (.csv)** produces one row per disc
-(`disc, stamp_text, status, to, date_made`) — a job sheet you can feed to a
-hand-stamping session now, or a laser/CNC engraver later (e.g. a campus
-makerspace). `stamp_text` is trimmed to 40 chars to fit a small disc.
+So recipient is stamped right alongside the number — no separate marking needed.
+
+### Metal = the weight of the promise
+You also choose a **weight tier** when you make each promise, which tells you
+**which metal to stamp it in**:
+
+| Tier | Metal | Meaning |
+|------|-------|---------|
+| Ordinary | **Aluminum** (lightest) | everyday commitments |
+| Serious | **Brass** | the ones that cost you something |
+| Standing | **Copper** (heaviest) | forever promises |
+
+Heavier promise → heavier metal → heavier jar. The Standing jar, full of copper,
+becomes the literal heaviest in the set. The app records the tier, shows it on
+each entry, and tells you the metal to grab when you create the promise.
+
+> Note: if you **promote** an open promise to standing later, its disc was likely
+> stamped in a lighter metal. Either re-stamp a copper disc and retire the old
+> one, or keep the original as a record of where the promise began — your call.
+
+### Marking discs as stamped
+Each promise has a **stamped / to-stamp** state. When you've physically made the
+disc, hit **Mark stamped** on that entry. Until then it counts as pending.
+
+### The stamping worklist + reminder
+- A banner at the top — **"N discs waiting to be stamped"** — appears whenever you
+  have unstamped promises. Tap **Show** to see each pending disc with its exact
+  label (e.g. `M-047`) and metal, so it doubles as your stamping job list.
+- In the evening (after 8 PM local), if discs are still unstamped and the app is
+  open, it shows a reminder. If you grant notification permission, it'll use a
+  real notification; otherwise an in-app message.
+
+> **Honest limit:** a guaranteed phone push at end of day — fired while the app is
+> closed — isn't reliably possible for an installed web app, especially on iPhone.
+> The banner (always visible when you open the app) is the dependable reminder. If
+> you want a hard daily nudge, set a simple recurring phone alarm titled "stamp
+> your promises" as a backstop.
+
+**Export discs for engraving (.csv)** now includes the stamp label, the metal,
+and whether each is already stamped — a complete batch-stamping worklist.
 
 ---
 
@@ -157,11 +191,14 @@ never included unless you also send them your `.json`.
   text        string
   who         "self" | "other"
   name        string                 (recipient's name; only for "other")
+  tier        "ordinary"|"serious"|"standing"  (→ Aluminum/Brass/Copper)
+  stamped     boolean                (physical disc made yet?)
   status      "open" | "standing" | "kept" | "broken"
   date_made   ISO timestamp
   date_closed ISO timestamp | null   (set on kept/broken)
   reason      string                 (mainly for broken)
   ```
+  The disc is stamped as `M-###` (to self) or `O-###` (to other).
   Top level also holds `nextDisc`.
 - **Where to extend:**
   - `WEIGHTS` / `DISC_GRAMS` — tune the symbolic weight model.
