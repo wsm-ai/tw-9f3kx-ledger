@@ -1,0 +1,18 @@
+<svg viewBox="0 0 220 240" xmlns="http://www.w3.org/2000/svg">
+  <rect width="220" height="240" fill="#1a1714"/>
+  <!-- Eternity: a lemniscate (endless crossing line) nested inside the wholeness circle.
+       Two eternity symbols in one mark. Label sits at the crossing, inside the ring. -->
+  <g stroke="#6f8f6a" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round">
+    <!-- the wholeness circle (your signature frame, tied to the keystone) -->
+    <circle cx="110" cy="100" r="66" stroke-width="2.4"/>
+    <!-- the lemniscate, crossing at centre -->
+    <path d="M110 100
+             C 88 80, 62 80, 62 100
+             C 62 120, 88 120, 110 100
+             C 132 80, 158 80, 158 100
+             C 158 120, 132 120, 110 100 Z"/>
+  </g>
+  <text x="110" y="105" text-anchor="middle" fill="#ddd2bf" font-family="monospace" font-size="14" letter-spacing="1">M-001</text>
+  <text x="110" y="196" text-anchor="middle" fill="#ddd2bf" font-family="monospace" font-size="13">the endless line, made whole</text>
+  <text x="110" y="218" text-anchor="middle" fill="#8c8273" font-family="monospace" font-size="12">standing · the path without end</text>
+</svg>

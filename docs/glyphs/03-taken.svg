@@ -1,0 +1,19 @@
+<svg viewBox="0 0 200 240" xmlns="http://www.w3.org/2000/svg">
+  <rect width="200" height="240" fill="#1a1714"/>
+  <!-- Ring centered (100,100) r=38. Gap on the RIGHT side.
+       Endpoints at ~35deg above/below straight-right:
+       y = 100 -/+ 38*sin35 = 100 -/+ 21.8 ; x = 100 + 38*cos35 = 131.1 -->
+  <g stroke="#c98b4b" stroke-width="3" fill="none" stroke-linecap="round">
+    <path d="M131.1 121.8 A38 38 0 1 1 131.1 78.2"/>
+  </g>
+  <!-- the breach: a stroke entering from OUTSIDE (beyond the right edge), striking inward through the gap.
+       Heavier weight = the external wound. -->
+  <g stroke="#a6584f" stroke-width="4" fill="none" stroke-linecap="round">
+    <line x1="182" y1="100" x2="120" y2="100"/>
+    <!-- arrow-bite at the point of entry, so it reads as struck-in from beyond, not drawn from within -->
+    <path d="M182 100 l10 -5 M182 100 l10 5"/>
+  </g>
+  <text x="100" y="106" text-anchor="middle" fill="#ddd2bf" font-family="monospace" font-size="19" letter-spacing="1">M-001</text>
+  <text x="100" y="190" text-anchor="middle" fill="#ddd2bf" font-family="monospace" font-size="13">the ring breached</text>
+  <text x="100" y="212" text-anchor="middle" fill="#8c8273" font-family="monospace" font-size="12">another's hand · taken from you</text>
+</svg>

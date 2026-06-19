@@ -1,0 +1,36 @@
+<svg viewBox="0 0 520 320" xmlns="http://www.w3.org/2000/svg">
+  <rect width="520" height="320" fill="#1a1714"/>
+
+  <text x="140" y="40" text-anchor="middle" fill="#c9a24b" font-family="monospace" font-size="13" letter-spacing="2">ETERNITY — HELD</text>
+  <text x="380" y="40" text-anchor="middle" fill="#c9a24b" font-family="monospace" font-size="13" letter-spacing="2">ETERNITY — SEVERED</text>
+
+  <!-- HELD: lemniscate within the wholeness circle -->
+  <g stroke="#6f8f6a" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round">
+    <circle cx="140" cy="150" r="60" stroke-width="2.4"/>
+    <path d="M140 150
+             C 120 132, 96 132, 96 150
+             C 96 168, 120 168, 140 150
+             C 160 132, 184 132, 184 150
+             C 184 168, 160 168, 140 150 Z"/>
+  </g>
+  <text x="140" y="234" text-anchor="middle" fill="#ddd2bf" font-family="monospace" font-size="11">the endless line, made whole</text>
+  <text x="140" y="253" text-anchor="middle" fill="#8c8273" font-family="monospace" font-size="10">a standing promise, walking on</text>
+
+  <!-- SEVERED: circle intact, lemniscate CUT at the crossing -->
+  <g stroke="#6f8f6a" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round">
+    <circle cx="380" cy="150" r="60" stroke-width="2.4"/>
+    <!-- left loop, ending short of centre -->
+    <path d="M374 144 C 358 132, 336 132, 336 150 C 336 168, 360 168, 376 154"/>
+    <!-- right loop, starting short of centre -->
+    <path d="M386 144 C 402 132, 424 132, 424 150 C 424 168, 400 168, 384 154"/>
+  </g>
+  <!-- the cut at the crossing -->
+  <g stroke="#a6584f" stroke-width="4" fill="none" stroke-linecap="round">
+    <line x1="368" y1="166" x2="392" y2="134"/>
+  </g>
+  <text x="380" y="234" text-anchor="middle" fill="#ddd2bf" font-family="monospace" font-size="11">the crossing cut, the circle still whole</text>
+  <text x="380" y="253" text-anchor="middle" fill="#8c8273" font-family="monospace" font-size="10">an eternal promise, broken</text>
+
+  <line x1="40" y1="278" x2="480" y2="278" stroke="#c9bca3" stroke-width="0.5" opacity="0.4"/>
+  <text x="260" y="302" text-anchor="middle" fill="#8c8273" font-family="monospace" font-size="11">sever the crossing and the endless line dies — your wholeness frame survives, the eternity within it does not.</text>
+</svg>
