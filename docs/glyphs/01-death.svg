@@ -1,0 +1,9 @@
+<svg viewBox="0 0 200 240" xmlns="http://www.w3.org/2000/svg">
+  <rect width="200" height="240" fill="#1a1714"/>
+  <g stroke="#c98b4b" stroke-width="3" fill="none" stroke-linecap="round">
+    <circle cx="100" cy="110" r="38"/>
+    <line x1="38" y1="110" x2="162" y2="110"/>
+  </g>
+  <text x="100" y="190" text-anchor="middle" fill="#ddd2bf" font-family="monospace" font-size="13">coin · sun · horizon</text>
+  <text x="100" y="212" text-anchor="middle" fill="#8c8273" font-family="monospace" font-size="12">the passage paid</text>
+</svg>
