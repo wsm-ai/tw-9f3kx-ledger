@@ -32,6 +32,47 @@ kept, they died"; *kept-ring + death glyph* = "honored, though they're gone."
 
 ---
 
+## The maker's mark — "The Eternal Path"
+
+The root glyph of the whole system. It signs favor tokens (the un-buyable security
+layer) and sets the visual hand the fate-glyphs follow. **Hand-drawn** — the file
+below is a seed/blueprint; the final line is trued by your own pen.
+
+![Maker's mark seed](glyphs/makers-mark-seed.svg)
+
+**Meaning — eternal cycles, repetition, the eternal path trodden, borne through
+hardship.** A promise practice *is* an eternal cycle: bind, keep or break, mark,
+repeat, for life. The mark encodes the nature of the practice it signs.
+
+**Elements:**
+- **The S / the snake** — one continuous serpentine line down the center; the eternal
+  path walked, and your initial **S**. *(In the seed render this is the central
+  winding; true the S-shape by hand so it reads clearly as an S.)*
+- **Two turnings** — the snake coils into a loop (ouroboros) at each end; doubled
+  eternal return, the cycle at both ends of the journey. Intended to form from the
+  bends of the S itself, not as separate rings.
+- **The spine** — a vertical stave running the full height; constancy, the rune-like
+  backbone shared with all fate-glyphs.
+- **Three trials** — three bars crossing the path (rule of threes); the hardships of
+  treading the eternal path.
+- **The wholeness circle** — encloses all; your signature frame, tied to the keystone
+  (CODE / wholeness). The circle is *yours* but may recur elsewhere when meaning calls
+  (e.g. the death glyph), as a deliberate echo rather than a constant.
+
+**Initials:** encoded, not spelled — **S** is the path itself. (W and M were explored
+as chevrons but dropped to keep the mark clean; the S carries the signature.)
+
+**Visual hand it sets for the language:** straight strokes = the fixed / binding
+(spine, trials); curved strokes = the living / cyclical (the snake, the turnings).
+This straight-vs-curved grammar carries into every fate-glyph.
+
+**Notes for the hand:** keep the *small* engraved version simple enough to reproduce
+identically every time — consistency is what makes the mark recognizable and
+forgery-resistant. You may keep this full form as a "crest" and use a simplified
+version on small discs. Replace the seed image with your own final drawing when ready.
+
+---
+
 ## Glyph 1 — DEATH ("the passage")
 
 ![The death glyph and its combinations](glyphs/01-death-combinations.svg)
