@@ -65,17 +65,31 @@ layer), sets the visual hand the fate-glyphs follow, and — enlarged — is the
 sigil** of every disc. **Hand-drawn** — the file below is a seed/blueprint; the final
 line is trued by your own pen.
 
-![Maker's mark seed](glyphs/makers-mark-seed.svg)
+![Maker's mark — drawn](glyphs/makers-mark.jpeg)
+
+*(Your hand-drawn mark — the canonical version. The earlier `makers-mark-seed.svg` is
+kept only as an early blueprint. This image is replaced when you engrave the final.)*
 
 **Meaning — eternal cycles, repetition, the eternal path trodden, borne through
 hardship.** A promise practice *is* an eternal cycle: bind, keep or break, mark,
 repeat, for life.
 
-**Elements:** the **S / snake** (one continuous serpentine line; the eternal path and
-your initial S) · **two turnings** (ouroboros coils at each end; doubled eternal
-return) · **the spine** (a vertical stave; constancy, the rune-like backbone) ·
-**three trials** (three crossing bars; the hardships of the path) · **the wholeness
-circle** (encloses all; tied to the keystone, CODE / wholeness).
+**Elements (as drawn):** the **S** — a vertical S down the center, your initial, and the
+crossing-stroke of an (incomplete) vertical lemniscate · **two coils** — a small circle
+at the **top end** and the **bottom end** of the S, the S curving into each; these are
+the ouroboros turnings / the lemniscate's two loops · **the center bar** — a single
+horizontal stroke through the S's waist (the crossing) · **the wholeness circle** — the
+outer ring enclosing all, tied to the keystone (CODE / wholeness), drawn with a
+deliberate **overshoot tail** at the top where the line curls in without fully closing —
+the eternal path left open, still being walked.
+
+> **The S is the eternal line, still being walked.** The lemniscate is left *open*
+> (the unclosed outer tail, the S that never seals into a symmetric ∞), so the mark
+> reads as the **incomplete** eternal path — the cycle in motion. This sets up the
+> deliberate contrast with the eternity *fate-glyph* (Family 1), which **is** a
+> *completed* lemniscate within the wholeness circle: signature = the path being walked
+> (open); standing-promise mark = the path made truly eternal (closed). Same core,
+> differing by completion. Your initial and the infinity sign are the same stroke.
 
 **Two registers of the mark:**
 - **Front-of-favor punch** — the small, constant, identically-reproducible version.
@@ -126,7 +140,10 @@ These are the terminal outcomes every circumstance attaches to.
   an ouroboros with a twist at the middle); the **endless knot** (Celtic, and the
   Buddhist shrivatsa) — a single line with no beginning or end. The enclosing circle
   rhymes with the maker's mark's own wholeness circle, so standing promises carry the
-  signature's eternal-path DNA.*
+  signature's eternal-path DNA. **Note the deliberate contrast:** the maker's mark is
+  the *incomplete* lemniscate (the S — the path still being walked); this glyph is the
+  *completed* lemniscate (the path made truly eternal). Signature = walking; standing =
+  the cycle closed.*
 - **Eternity — severed** *(drawn)* — the **crossing of the lemniscate is cut**, while
   the **wholeness circle stays intact**. The crossing *is* the meaning of the inner
   figure; cut it and the endless line dies into two dead arcs. Leaving the outer circle
@@ -316,8 +333,15 @@ useful, a combinations sheet (`NN-name-combinations.svg`). SVGs are sharp at any
 render on GitHub and in browsers, and open large at the bench. **Keep the `glyphs/`
 folder beside this file** or the images won't render.
 
-Drawn so far: `makers-mark-seed` · `01-death` (+combinations) · `02-abandoned` ·
+Drawn so far: `makers-mark.jpeg` (your hand-drawn mark — canonical) ·
+`makers-mark-seed.svg` (early blueprint) · `01-death` (+combinations) · `02-abandoned` ·
 `03-taken` · `04-eternity` (+combinations) · `bad-ends-combinations`.
+
+> **All SVG glyphs are placeholders in my hand, not yours.** They fix the *structure
+> and meaning* so nothing is lost, but the canonical mark is always **your own
+> drawing**. As you draw each glyph yourself, replace the SVG with a photo/scan of your
+> version (as already done for the maker's mark); when you engrave the final, replace
+> that with the engraving. Keep the same filename so the doc references keep resolving.
 
 ---
 
