@@ -31,10 +31,13 @@ The real kit on hand. Update this as things change — replace a line, or add to
 - **Copper (standing):** ImpressArt 1" circle, 24-pack.
 
 ### The vessels (jars)
-- **Open / Standing / Kept:** FastRack 16 oz regular-mouth mason jars with airtight
-  lids, 4-pack (one spare).
+- **Open / Standing / Kept:** currently all **mason jars** (FastRack 16 oz
+  regular-mouth, 4-pack, one spare) — these are interim. Final vessels chosen as
+  upgrades; see the vessel upgrades section below.
 - **Dead (Broken):** Infinity Jars 100 ml UV-black screw-top, airtight. Fully opaque
-  — honors "set down, not on display" even more than amber.
+  — honors "set down, not on display." **This is the only final vessel so far.**
+- **Memorial:** still to be acquired — a glass hurricane lantern is the chosen
+  upgrade (see below).
 
 ### The maker's mark (the back sigil)
 - **Always hand-engraved** — by deliberate choice, never a bought punch. The sigil
@@ -69,6 +72,10 @@ The real kit on hand. Update this as things change — replace a line, or add to
 *(Add dated lines as you change gear.)*
 - **2026-06:** Added Renaissance Wax (200 ml). Scheme set — wax brass + copper to
   preserve them; leave aluminum bare to age.
+- **2026-06:** Dead vessel finalized = Infinity Jar (UV-black). Upgrade vessels
+  chosen (not yet bought) — Open: Kroujity ceramic bowl; Standing: cobalt apothecary
+  jar; Kept: QuickCandles footed apothecary jar; Memorial: Pottery Barn hurricane.
+  Open / Standing / Kept still on interim mason jars until purchased.
 
 ---
 
@@ -128,7 +135,7 @@ cadence. Never wax the aluminum.
 - **Open · Standing · Kept · Dead (Broken)** — the four jars.
 - **Dead-promises jar** (the UV-black one) holds failed promises — *one-way*, never
   resurrected.
-- **Memorial vessel** (separate, to be chosen) holds memorial discs for people who
+- **Memorial vessel** — a **glass lantern** holds the memorial discs for people who
   have died — kept apart from the dead-promises jar, because the dead are not
   failures.
 
@@ -188,14 +195,38 @@ Costs are rough and general.
 > The maker's mark is **always hand-engraved**, never a bought punch — so there's no
 > custom-stamp purchase in this list. Your hand is the un-buyable layer.
 
-### The vessels
-- **A matched set** if you want the living three (and/or all four) to read as a
-  family — heavier ground-glass-stopper apothecary jars, or a full Infinity Jars
-  set. The current mason + single UV-black mix works and is arguably more meaningful
-  (the dead jar apart), so this is aesthetic, not necessary. ~$30–60 for a decent
-  set; a premium all-glass apothecary set runs into the hundreds.
-- **A dedicated memorial vessel** — currently unbought. Something distinct from both
-  the dead jar and the living jars: a small lidded box, a lantern, an urn. ~$15–40.
+### The vessels — chosen upgrades
+Currently everything is a mason jar except the Dead vessel. These are the chosen
+upgrade products for each (links are starting points — verify size, stock, and price
+before buying):
+
+- **Open (the unsealed working bowl)** — a wide, low ceramic catch-all bowl; humble,
+  handled constantly, the "least precious" vessel. When a promise is kept, its disc
+  graduates from this rough bowl into the bright glass of Kept.
+  - Chosen: Kroujity handmade decorative ceramic entryway bowl —
+    https://www.amazon.com/KROUJITY-Decorative-Ceramic-Entryway-Handmade/dp/B0FZVTQYTF
+- **Standing (the heavy pillar)** — a thick ground-glass-stopper apothecary jar that
+  seats with weight; the most substantial jar on the shelf.
+  - Chosen: vintage cobalt-blue ground-glass apothecary jar —
+    https://www.etsy.com/listing/4391556394/vintage-cobalt-blue-apothecary-glass-jar
+    *(note: cobalt is colored/semi-opaque, so the copper inside won't be fully
+    visible — Standing becomes an enshrined vessel rather than a display one, which
+    suits "forever.")*
+- **Kept (the raised chalice)** — a footed/pedestal jar with a lid; the one vessel
+  allowed to be a little beautiful, lifted and bright.
+  - Chosen: QuickCandles 15.5" footed glass apothecary jar —
+    https://quickcandles.com/products/glass-apothecary-jars-15-5in
+- **Dead (Broken)** — **already done:** Infinity Jars 100 ml UV-black (in inventory).
+- **Memorial** — a glass hurricane lantern; the dead kept in light, distinct in form
+  from the dead jar.
+  - Chosen: Pottery Barn glass hurricane with rustic tray —
+    https://www.potterybarn.com/products/glass-hurricane-with-rustic-tray-mp/
+
+> Ordering note: these vessels are intentionally *not* a matched set — each carries
+> its own character (open bowl, heavy pillar, lifted chalice, sealed dark jar,
+> lantern), the way the app's jars do. A unifying touch (an engraved disc or your
+> maker's mark on each base) is what ties them into one system.
+
 - **A wax seal or harder-to-open lid for the dead jar** — friction that makes
   resurrection feel as wrong physically as it is in the system. ~$10–20.
 
