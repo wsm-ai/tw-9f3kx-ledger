@@ -55,32 +55,244 @@
   .masthead .sub { color: var(--paper-dim); font-style: italic; font-size: 15px; margin-top: 6px; }
 
   /* ---- the four jars ---- */
+  /* ---- top tab bar ---- */
+  .tabbar {
+    display: flex; gap: 4px; margin: 22px 0 8px;
+    border-bottom: 1px solid rgba(201,188,163,.18); padding-bottom: 0;
+  }
+  .tab {
+    flex: 1; background: transparent; border: none; color: var(--paper-dim);
+    font: inherit; font-size: 14px; letter-spacing: .04em; cursor: pointer;
+    padding: 12px 8px 13px; border-bottom: 2px solid transparent; position: relative;
+    transition: color .15s, border-color .15s;
+    font-family: ui-monospace, "SF Mono", Menlo, monospace; text-transform: uppercase;
+    letter-spacing: .14em; font-size: 11.5px;
+  }
+  .tab:hover { color: var(--paper); }
+  .tab.active { color: var(--gold); border-bottom-color: var(--gold); }
+  .tab-badge {
+    display: inline-block; min-width: 16px; margin-left: 6px; padding: 0 5px;
+    font-size: 10px; border-radius: 999px; background: rgba(201,162,75,.18);
+    color: var(--gold); vertical-align: middle;
+  }
+  .tab-badge:empty { display: none; }
+
+  /* ---- the four jars (custom, themed) ---- */
   .jars {
     display: grid; grid-template-columns: repeat(4, 1fr);
-    gap: 10px; margin: 26px 0 8px;
+    gap: 12px; margin: 22px 0 8px;
   }
-  @media (max-width: 560px){ .jars { grid-template-columns: repeat(2,1fr); gap: 14px; } }
+  @media (max-width: 560px){ .jars { grid-template-columns: repeat(2,1fr); gap: 16px; } }
   .jar-card {
-    background: rgba(255,255,255,.03);
-    border: 1px solid rgba(201,188,163,.18);
-    border-radius: var(--r); padding: 12px 10px 14px;
+    position: relative; overflow: hidden;
+    background: rgba(255,255,255,.025);
+    border: 1px solid rgba(201,188,163,.16);
+    border-radius: var(--r); padding: 14px 10px 14px;
     text-align: center; cursor: pointer;
-    transition: transform .15s ease, border-color .15s ease, background .15s ease;
+    transition: transform .18s ease, border-color .18s ease, box-shadow .25s ease;
   }
-  .jar-card:hover { transform: translateY(-2px); border-color: var(--gold); }
-  .jar-card.active { border-color: var(--gold); background: rgba(201,162,75,.10); }
-  .jar-svg { width: 100%; height: 96px; display: block; }
+  .jar-card:hover { transform: translateY(-3px); }
+  .jar-vessel { position: relative; width: 100%; height: 130px; display: block; z-index: 2; }
   .jar-name {
     font-family: ui-monospace, "SF Mono", Menlo, monospace;
-    text-transform: uppercase; letter-spacing: .18em; font-size: 10.5px;
-    margin-top: 8px; color: var(--paper-dim);
+    text-transform: uppercase; letter-spacing: .16em; font-size: 10.5px;
+    margin-top: 10px; color: var(--paper-dim); position: relative; z-index: 2;
   }
-  .jar-card.active .jar-name { color: var(--gold); }
-  .jar-count { font-size: 22px; font-weight: 600; margin-top: 2px; }
+  .jar-count { font-size: 22px; font-weight: 600; margin-top: 2px; position: relative; z-index: 2; }
   .jar-weight {
     font-family: ui-monospace, monospace; font-size: 10px; color: var(--line);
-    margin-top: 1px; letter-spacing: .04em;
+    margin-top: 1px; letter-spacing: .04em; position: relative; z-index: 2;
   }
+  /* ambient layer behind the vessel */
+  .jar-ambient { position: absolute; inset: 0; z-index: 1; pointer-events: none; overflow: hidden; border-radius: var(--r); }
+
+  /* —— OPEN: open & inviting — warm dawn light, rising motes —— */
+  .jar-card.theme-open { background: radial-gradient(120% 90% at 50% 0%, rgba(201,160,106,.16), transparent 70%); }
+  .jar-card.theme-open.active { border-color: #d7a960; box-shadow: 0 0 28px rgba(201,160,106,.28); }
+  .jar-card.theme-open .jar-name, .jar-card.theme-open.active .jar-name { color: #d8b06a; }
+  .theme-open .mote { position: absolute; bottom: -8px; width: 4px; height: 4px; border-radius: 50%;
+    background: #e8c987; opacity: 0; animation: rise 5s linear infinite; }
+  .theme-open .mote:nth-child(1){ left: 22%; animation-delay: 0s; }
+  .theme-open .mote:nth-child(2){ left: 52%; animation-delay: 1.6s; }
+  .theme-open .mote:nth-child(3){ left: 74%; animation-delay: 3.1s; }
+  @keyframes rise { 0%{ transform: translateY(0) scale(1); opacity: 0; }
+    20%{ opacity: .8; } 100%{ transform: translateY(-120px) scale(.4); opacity: 0; } }
+
+  /* —— STANDING: strong & enduring — glowing runes ascending a firm pillar —— */
+  .jar-card.theme-standing { background: linear-gradient(180deg, rgba(125,106,156,.12), rgba(75,63,96,.16)); }
+  .jar-card.theme-standing.active { border-color: #8d79b3; box-shadow: 0 0 26px rgba(125,106,156,.3); }
+  .jar-card.theme-standing .jar-name, .jar-card.theme-standing.active .jar-name { color: #b3a0cf; }
+  /* carved eternity-glyphs that glow and drift slowly upward — present but unhurried, like stone holding */
+  .theme-standing .rune {
+    position: absolute; left: 50%; color: #c3b1de;
+    opacity: 0; animation: runeRise 7s ease-in-out infinite;
+    filter: drop-shadow(0 0 5px rgba(179,160,207,.9)) drop-shadow(0 0 9px rgba(141,121,179,.55));
+  }
+  .theme-standing .rune .et-svg { display: block; }
+  .theme-standing .rune.r1 { width: 22px; margin-left: -30px; animation-delay: 0s; }
+  .theme-standing .rune.r2 { width: 26px; margin-left: 2px;  animation-delay: 2.3s; }
+  .theme-standing .rune.r3 { width: 20px; margin-left: 18px; animation-delay: 4.6s; }
+  @keyframes runeRise {
+    0%   { transform: translateY(118px) scale(.85); opacity: 0; }
+    18%  { opacity: .9; }
+    70%  { opacity: .75; }
+    100% { transform: translateY(20px) scale(1.05); opacity: 0; }
+  }
+  /* a steady firm pulse on the whole card — the "withstands time" heartbeat */
+  .jar-card.theme-standing { animation: firmPulse 5s ease-in-out infinite; }
+  @keyframes firmPulse {
+    0%,100% { box-shadow: inset 0 0 0 rgba(141,121,179,0); }
+    50%     { box-shadow: inset 0 0 22px rgba(141,121,179,.16); }
+  }
+
+  /* —— KEPT: angelic — ascending halo glow, light rays —— */
+  .jar-card.theme-kept { background: radial-gradient(90% 70% at 50% 18%, rgba(111,143,106,.16), transparent 70%); }
+  .jar-card.theme-kept.active { border-color: #9fc59a; box-shadow: 0 0 30px rgba(159,197,154,.32); }
+  .jar-card.theme-kept .jar-name, .jar-card.theme-kept.active .jar-name { color: #9fc59a; }
+  .theme-kept .halo { position: absolute; left: 50%; top: 14px; width: 70px; height: 70px;
+    transform: translateX(-50%); border-radius: 50%;
+    background: radial-gradient(circle, rgba(220,236,200,.5), transparent 65%);
+    animation: glow 4.5s ease-in-out infinite; }
+  @keyframes glow { 0%,100%{ opacity: .35; transform: translateX(-50%) scale(.9); }
+    50%{ opacity: .7; transform: translateX(-50%) scale(1.08); } }
+  .theme-kept .ray { position: absolute; top: -6px; width: 1.5px; height: 60px;
+    background: linear-gradient(rgba(220,236,200,.5), transparent);
+    transform-origin: top center; opacity: .5; }
+
+  /* —— DEAD: graveyard — a thick creeping miasma —— */
+  .jar-card.theme-broken { background: linear-gradient(180deg, rgba(60,55,52,.3), rgba(40,36,33,.55)); }
+  .jar-card.theme-broken.active { border-color: #a6584f; box-shadow: 0 0 24px rgba(120,60,52,.3); }
+  .jar-card.theme-broken .jar-name, .jar-card.theme-broken.active .jar-name { color: #b06a5f; }
+  /* three layered, blurred clouds of miasma that roll and breathe at different speeds */
+  .theme-broken .miasma {
+    position: absolute; border-radius: 50%; filter: blur(9px); pointer-events: none;
+  }
+  .theme-broken .miasma.m1 {
+    bottom: -14px; left: -20%; width: 90%; height: 70px;
+    background: radial-gradient(circle, rgba(120,140,120,.30), transparent 70%);
+    animation: miasmaRoll 11s ease-in-out infinite;
+  }
+  .theme-broken .miasma.m2 {
+    bottom: -6px; right: -20%; width: 85%; height: 80px;
+    background: radial-gradient(circle, rgba(95,110,100,.28), transparent 70%);
+    animation: miasmaRoll 14s ease-in-out infinite reverse;
+  }
+  .theme-broken .miasma.m3 {
+    bottom: 18px; left: 10%; width: 80%; height: 60px;
+    background: radial-gradient(circle, rgba(150,140,135,.22), transparent 70%);
+    animation: miasmaRise 9s ease-in-out infinite;
+  }
+  @keyframes miasmaRoll {
+    0%,100% { transform: translateX(-14%) scale(1); opacity: .5; }
+    50%     { transform: translateX(14%) scale(1.12); opacity: .85; }
+  }
+  @keyframes miasmaRise {
+    0%,100% { transform: translateY(8px) scale(1); opacity: .35; }
+    50%     { transform: translateY(-10px) scale(1.1); opacity: .7; }
+  }
+
+  /* —— FAVORS view: a faint gold coin-shimmer (bearer tokens changing hands) —— */
+  .favors-banner {
+    position: relative; overflow: hidden;
+    border: 1px solid rgba(201,162,75,.3); background: rgba(201,162,75,.05);
+    border-radius: var(--r); padding: 14px 16px; margin-bottom: 12px;
+    font-size: 13.5px; line-height: 1.5; color: var(--paper-dim);
+  }
+  .favors-banner .ft-title { color: var(--gold); font-weight: 600; letter-spacing: .02em; }
+  .favors-banner::after {
+    content: ""; position: absolute; inset: 0; pointer-events: none;
+    background: linear-gradient(115deg, transparent 30%, rgba(232,201,135,.16) 50%, transparent 70%);
+    background-size: 250% 100%; animation: shimmer 5.5s ease-in-out infinite;
+  }
+  @keyframes shimmer { 0%{ background-position: 130% 0; } 100%{ background-position: -130% 0; } }
+
+  /* —— MEMORIAL view: a still, dim candle-glow — reverent, barely moving —— */
+  .mem-banner-glow {
+    position: relative; overflow: hidden;
+    border: 1px solid rgba(125,106,156,.3); background: rgba(125,106,156,.05);
+    border-radius: var(--r); padding: 14px 16px 16px; margin-bottom: 12px;
+  }
+  .mem-banner-glow::before {
+    content: ""; position: absolute; left: 50%; top: -30px; width: 120px; height: 120px;
+    transform: translateX(-50%); border-radius: 50%; pointer-events: none;
+    background: radial-gradient(circle, rgba(220,200,150,.16), transparent 65%);
+    animation: candle 6s ease-in-out infinite;
+  }
+  @keyframes candle { 0%,100%{ opacity: .5; transform: translateX(-50%) scale(1); }
+    45%{ opacity: .8; transform: translateX(-51%) scale(1.04); }
+    70%{ opacity: .6; transform: translateX(-49%) scale(.98); } }
+
+  /* —— respect reduced-motion preferences: still everything, keep the look —— */
+  @media (prefers-reduced-motion: reduce) {
+    .jar-card, .mote, .rune, .halo, .miasma,
+    .favors-banner::after, .mem-banner-glow::before, .mem-flame, .tab-vessel {
+      animation: none !important;
+    }
+    .mote, .rune { opacity: .7; }
+    .miasma { opacity: .6; }
+  }
+
+  /* a single centered vessel atop the Favors / Memorial views */
+  .tab-vessel { display: block; margin: 8px auto 4px; width: 120px; height: 150px; }
+  .tab-vessel .jar-vessel { width: 120px; height: 150px; }
+  .mem-flame { transform-origin: 40px 70px; animation: flicker 3.4s ease-in-out infinite; }
+  @keyframes flicker {
+    0%,100% { opacity: 1; transform: scale(1) translateX(0); }
+    30%     { opacity: .85; transform: scale(.96) translateX(.4px); }
+    55%     { opacity: 1; transform: scale(1.04) translateX(-.3px); }
+    80%     { opacity: .92; transform: scale(.99) translateX(.2px); }
+  }
+  .favors-vessel-wrap, .mem-vessel-wrap { text-align: center; }
+
+  /* keystone — the founding promise, set subtly apart */
+  .entry.keystone { border-color: rgba(201,162,75,.5); box-shadow: inset 3px 0 0 var(--gold); }
+  .keystonetag {
+    font-family: ui-monospace, monospace; font-size: 10px; padding: 1px 8px; border-radius: 9px;
+    color: #20180a; background: var(--gold); letter-spacing: .06em; font-weight: 600;
+  }
+  /* re-forge flag (promotion to copper) */
+  .reforgetag {
+    font-family: ui-monospace, monospace; font-size: 10px; padding: 1px 8px; border-radius: 9px;
+    color: #c07a52; border: 1px dashed rgba(192,122,82,.6); letter-spacing: .04em;
+  }
+  /* the carried total — the weight on you right now */
+  .carried {
+    text-align: center; margin: 18px 0 2px;
+    font-family: ui-monospace, monospace; font-size: 12px; color: var(--paper-dim);
+    letter-spacing: .04em;
+  }
+  .carried .cw { color: var(--gold); font-size: 15px; font-weight: 600; }
+  /* reckoning banner — promises gone quiet */
+  .reckoning {
+    border: 1px solid rgba(201,162,75,.4); background: rgba(201,162,75,.06);
+    border-radius: var(--r); padding: 12px 14px; margin: 0 0 12px;
+  }
+  .reckoning .rk-title { color: var(--gold); font-weight: 600; font-size: 14px; }
+  .reckoning .rk-sub { font-size: 12.5px; color: var(--paper-dim); margin-top: 3px; line-height: 1.5; }
+  .reckoning .rk-list { margin-top: 8px; display: flex; flex-direction: column; gap: 5px; }
+  .rk-row { font-family: ui-monospace, monospace; font-size: 12px; color: var(--paper);
+    display: flex; gap: 8px; align-items: center; }
+  .rk-row .rk-age { color: var(--broken); margin-left: auto; }
+
+  /* ledger / reckoning-over-time chart */
+  .ledger-head { display:flex; align-items:center; justify-content:space-between; gap:10px; margin: 4px 0 14px; flex-wrap: wrap; }
+  .ledger-title { font-size: 18px; font-weight: 600; }
+  .ledger-toggle { display:flex; gap:6px; }
+  .ledger-toggle .chip { cursor:pointer; }
+  .chart-wrap { background: rgba(255,255,255,.025); border:1px solid rgba(201,188,163,.16);
+    border-radius: var(--r); padding: 16px 14px 10px; overflow: hidden; }
+  .chart-legend { display:flex; gap:16px; justify-content:center; margin-top:10px; flex-wrap:wrap; font-family: ui-monospace,monospace; font-size:11px; }
+  .chart-legend span { display:inline-flex; align-items:center; gap:6px; color: var(--paper-dim); }
+  .chart-legend i { width:14px; height:3px; border-radius:2px; display:inline-block; }
+  .ledger-stats { display:grid; grid-template-columns: repeat(3,1fr); gap:10px; margin-top:14px; }
+  .lstat { text-align:center; background: rgba(255,255,255,.03); border:1px solid rgba(201,188,163,.14);
+    border-radius: var(--r); padding: 12px 8px; }
+  .lstat .lv { font-size: 22px; font-weight: 600; }
+  .lstat .ll { font-family: ui-monospace,monospace; font-size:10px; text-transform:uppercase; letter-spacing:.12em; color: var(--line); margin-top:3px; }
+  .lstat.bound .lv { color: var(--gold); }
+  .lstat.kept  .lv { color: var(--self); }
+  .lstat.died  .lv { color: var(--broken); }
+
 
   /* ---- toolbar ---- */
   .toolbar {
@@ -171,6 +383,48 @@
     color: var(--paper-dim); border: 1px dashed rgba(201,188,163,.4); letter-spacing: .06em;
   }
   .tbd { color: var(--line); font-style: italic; }
+
+  /* memorial */
+  .favor-tab.memorial { border-color: rgba(125,106,156,.4); background: rgba(125,106,156,.06); }
+  .favor-tab.memorial.active { border-color: var(--other); background: rgba(125,106,156,.13); }
+  .favor-tab.memorial .ft-count { color: #b3a0cf; }
+  .mem-intro {
+    border: 1px solid rgba(125,106,156,.3); background: rgba(125,106,156,.06);
+    border-radius: var(--r); padding: 14px 16px; font-size: 13.5px; line-height: 1.55;
+    color: var(--paper-dim); margin-bottom: 12px;
+  }
+  .mem-intro em { color: #b3a0cf; font-style: italic; }
+  .mem-card {
+    border: 1px solid rgba(201,188,163,.18); background: rgba(255,255,255,.035);
+    border-radius: var(--r); padding: 14px 16px; margin-bottom: 10px;
+  }
+  .mem-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 10px; }
+  .mem-name { font-size: 19px; font-weight: 600; }
+  .mem-date { font-family: ui-monospace, monospace; font-size: 11px; color: var(--line); margin-top: 3px; }
+  .mem-actions { display: flex; gap: 6px; flex: none; }
+  .mem-note { font-style: italic; color: var(--paper-dim); margin: 8px 0 4px; }
+  .mem-proms { margin-top: 10px; display: flex; flex-direction: column; gap: 6px; }
+  .mem-prom {
+    display: flex; align-items: center; gap: 10px; font-size: 13px;
+    padding: 6px 8px; background: rgba(255,255,255,.03); border-radius: 8px;
+  }
+  .mem-prom-text { flex: 1; min-width: 0; }
+  .mem-fate {
+    font-family: ui-monospace, monospace; font-size: 10px; text-transform: uppercase;
+    letter-spacing: .08em; padding: 1px 8px; border-radius: 9px; border: 1px solid;
+  }
+  .mem-fate.kept { color: var(--self); border-color: var(--self-dim); }
+  .mem-fate.broken { color: var(--broken); border-color: #6e3a34; }
+  .mem-fate.open, .mem-fate.standing { color: var(--gold); border-color: rgba(201,162,75,.4); }
+  .mem-discnote {
+    margin-top: 10px; font-family: ui-monospace, monospace; font-size: 11px;
+    color: var(--line); border-top: 1px dashed rgba(201,188,163,.2); padding-top: 8px;
+  }
+  .mem-discnote .hl { color: #b3a0cf; }
+  .gonetag {
+    font-family: ui-monospace, monospace; font-size: 10px; padding: 1px 8px; border-radius: 9px;
+    color: #b3a0cf; border: 1px solid rgba(125,106,156,.5); letter-spacing: .06em;
+  }
 
   /* disc maker */
   .discmaker { max-width: 560px; }
@@ -288,6 +542,23 @@
   .chip.on { background: rgba(201,162,75,.16); color: var(--gold); border-color: var(--gold); }
   .hint { font-size: 12px; color: var(--line); text-align:center; margin-top: 8px; font-style: italic;}
 
+  /* keyword suggestion chips */
+  .kw-suggest { display: flex; flex-wrap: wrap; gap: 7px; margin-bottom: 9px; min-height: 0; }
+  .kw-suggest:empty { margin-bottom: 0; }
+  .kw-chip {
+    font-family: ui-monospace, monospace; font-size: 11px; text-transform: uppercase;
+    letter-spacing: .12em; padding: 6px 11px; border-radius: 999px; cursor: pointer;
+    background: rgba(201,162,75,.08); border: 1px solid rgba(201,162,75,.4); color: var(--gold);
+    transition: background .12s, border-color .12s;
+  }
+  .kw-chip:hover { background: rgba(201,162,75,.18); }
+  .kw-chip.on { background: var(--gold); color: #20180a; border-color: var(--gold); font-weight: 600; }
+  .keywordtag {
+    font-family: ui-monospace, monospace; font-size: 10px; padding: 1px 8px; border-radius: 9px;
+    color: var(--gold); border: 1px dashed rgba(201,162,75,.5); letter-spacing: .1em;
+    text-transform: uppercase;
+  }
+
   /* ---- sync status badge ---- */
   .syncbar { display: flex; justify-content: center; margin-top: 16px; }
   .syncbadge {
@@ -316,13 +587,24 @@
     <p class="sub">Every promise made, and what became of it.</p>
   </header>
 
+  <!-- TOP TAB BAR -->
+  <nav class="tabbar" id="tabbar">
+    <button class="tab active" data-tab="jars">The Jars</button>
+    <button class="tab" data-tab="favors">Favors<span class="tab-badge" id="favorsBadge"></span></button>
+    <button class="tab" data-tab="memorial">Memorial<span class="tab-badge" id="memorialBadge"></span></button>
+    <button class="tab" data-tab="ledger">Ledger</button>
+  </nav>
+
   <!-- JARS -->
   <section class="jars" id="jars"></section>
 
-  <!-- FAVORS TAB -->
-  <div class="favor-tab" id="favorTab"></div>
-
   <p class="hint" id="loadHint">Tap a jar to see what's inside.</p>
+
+  <!-- the weight you carry right now -->
+  <div class="carried" id="carried"></div>
+
+  <!-- reckoning: open promises gone quiet -->
+  <div id="reckoning"></div>
 
   <!-- UNSTAMPED WORKLIST -->
   <div class="worklist" id="worklist">
@@ -382,6 +664,15 @@
       <label id="textLabel">The promise</label>
       <textarea id="fText" placeholder="What are you binding yourself to?"></textarea>
     </div>
+    <div class="field" id="keywordField">
+      <label id="keywordLabel">Keyword — hand-engraved above the number</label>
+      <div class="kw-suggest" id="kwSuggest"></div>
+      <input type="text" id="fKeyword" placeholder="e.g. CODE — tap a word above or type your own" autocomplete="off" maxlength="24">
+    </div>
+    <div class="field" id="glyphField" style="display:none;">
+      <label id="glyphLabel">Fate-glyph — which mark this disc carries</label>
+      <div class="kw-suggest" id="glyphChips"></div>
+    </div>
     <div class="field" id="whoField">
       <label>To whom</label>
       <div class="seg" id="fWho">
@@ -411,6 +702,10 @@
     <div class="sheet-actions">
       <button class="btn ghost" id="cancelBtn">Cancel</button>
       <button class="btn gold" id="saveBtn">Bind it</button>
+    </div>
+    <div id="deleteRow" style="display:none; margin-top:12px; text-align:center;">
+      <button class="btn ghost sm" id="deleteBtn" style="color:var(--broken); border-color:rgba(166,88,79,.4);">Delete this promise</button>
+      <p class="hint" style="margin-top:6px;">Only unstamped promises can be deleted. The disc number won't be reused.</p>
     </div>
   </div>
 </div>
@@ -461,6 +756,12 @@ function discLabel(p){
   const prefix = p.favor ? "F-" : (p.who==="self" ? "M-" : "O-");
   return prefix + String(p.disc).padStart(3,'0');
 }
+
+// The keystone — M-001, the founding promise that judges all others.
+const KEYSTONE_VOW = "I will do what I believe is right, and bear the cost of it.";
+function isKeystone(p){ return !p.favor && p.who==="self" && p.disc===1; }
+function keystone(){ return state.promises.find(isKeystone); }
+
 // 10-digit verification number, hand-engraved on the BACK of a favor disc.
 // Collision-free across all existing favors.
 function makeVerifyNumber(){
@@ -475,6 +776,8 @@ function makeVerifyNumber(){
 
 let state = load();
 let activeJar = "open";
+let currentTab = "jars";   // jars | favors | memorial | ledger
+let ledgerMetric = "weight"; // weight | count
 let whoFilter = "all";
 let editingId = null;
 let draftWho = "self";
@@ -482,7 +785,28 @@ let draftName = "";
 let draftStanding = false;
 let draftTier = "ordinary";
 let draftFavor = false;
+let draftKeyword = "";
+let draftGlyph = "";
 let showStampList = false;   // "to stamp" worklist view toggle
+
+// Pull candidate keywords from a vow: the most significant words, longest first,
+// stop-words removed. The person taps one or types their own.
+const KW_STOP = new Set(("a an and the to of i my me you your we our it that this will "
+  + "do be is are was for with on in at by as so not no but or if then than what "
+  + "who whom whose which when where why how all any can cant won't wont shall "
+  + "would should could have has had they them their he she his her its from into "
+  + "out up down over under again about").split(/\s+/));
+function keywordCandidates(text){
+  const seen = new Set();
+  return (text||"")
+    .toLowerCase()
+    .replace(/[^a-z\s'-]/g," ")
+    .split(/\s+/)
+    .filter(w => w.length >= 3 && !KW_STOP.has(w) && !seen.has(w) && seen.add(w))
+    .sort((a,b)=> b.length - a.length)
+    .slice(0,5)
+    .map(w => w.toUpperCase());
+}
 
 /* ---------- persistence ---------- */
 let fileHandle = null;      // linked cloud-folder file (File System Access API)
@@ -493,9 +817,13 @@ const supportsFS = ("showSaveFilePicker" in window) && ("showOpenFilePicker" in 
 function load(){
   try {
     const raw = localStorage.getItem(STORE_KEY);
-    if (raw) return JSON.parse(raw);
+    if (raw){
+      const s = JSON.parse(raw);
+      if (!Array.isArray(s.memorial)) s.memorial = [];   // back-compat
+      return s;
+    }
   } catch(e){}
-  return { nextDisc: 1, promises: [] };
+  return { nextDisc: 1, promises: [], memorial: [] };
 }
 
 // Save is now: write local immediately (never lose work on-device),
@@ -554,33 +882,178 @@ const JAR_DEFS = [
   { key:"open",     label:"Open",     desc:"in progress" },
   { key:"standing", label:"Standing", desc:"never finished" },
   { key:"kept",     label:"Kept",     desc:"honored" },
-  { key:"broken",   label:"Broken",   desc:"let go" },
+  { key:"broken",   label:"Dead (Broken)", desc:"dead promises" },
 ];
 
-/* ---------- jar SVG (fill ∝ count, color = jar identity) ---------- */
-function jarSVG(count, max, key){
-  const fillColors = { open:"#b9a06a", standing:"#7d6a9c", kept:"#6f8f6a", broken:"#a6584f" };
-  const c = fillColors[key];
-  const ratio = max>0 ? Math.min(1, count/max) : 0;
-  const jarTop=22, jarBot=90, jarH=jarBot-jarTop;
-  const level = jarBot - jarH*ratio;
-  // marble dots scattered in the filled region
-  let dots="";
-  const n = Math.min(count, 18);
-  for(let i=0;i<n;i++){
-    const x = 18 + Math.random()*44;
-    const y = level + 4 + Math.random()*(jarBot-level-6 < 4 ? 4 : (jarBot-level-6));
-    if (y < jarBot-3 && y > jarTop) dots += `<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="3.1" fill="${c}" opacity="0.9"/>`;
+/* ---------- custom themed jar vessels (fill ∝ count, coins visible) ---------- */
+// deterministic pseudo-random so coins don't jitter on every re-render
+function seeded(i, salt){ const x = Math.sin((i+1)*12.9898 + salt*78.233) * 43758.5453; return x - Math.floor(x); }
+
+// metal appearance per tier — color, radius, and a sheen highlight
+const COIN_STYLE = {
+  ordinary: { fill:"#c7cace", sheen:"#eef0f2", rx:3.0, ry:2.5 },  // aluminum — light, small
+  serious:  { fill:"#cda84e", sheen:"#f0d98a", rx:3.5, ry:3.0 },  // brass — mid
+  standing: { fill:"#c47b52", sheen:"#e6a878", rx:4.1, ry:3.5 }   // copper — heaviest, largest
+};
+
+// Coins settle at the FLOOR and stack upward in rows, like they have weight.
+// Heaviest (copper) sinks to the bottom rows; lighter coins rest on top.
+// `items` = promises in this jar. x0..x1 are the inner walls; yBot is the floor.
+function coinPile(items, x0, x1, yBot, yLevel, fallback, salt){
+  // heaviest first so copper is laid down on the bottom rows
+  const order = { standing:0, serious:1, ordinary:2 };
+  const list = items.slice().sort((a,b)=> (order[a.tier]??1) - (order[b.tier]??1));
+  const n = Math.min(list.length, 28);
+  if (n === 0) return "";
+
+  const w = x1 - x0;
+  const coinW = 8.5;                         // nominal coin footprint
+  const perRow = Math.max(3, Math.floor(w / coinW));
+  const rowH = 5.2;                          // vertical spacing between stacked rows
+  let dots = "";
+
+  for (let i=0;i<n;i++){
+    const p = list[i];
+    const st = COIN_STYLE[p && p.tier] || { fill:fallback, sheen:"rgba(255,255,255,.5)", rx:3.4, ry:2.9 };
+    const row = Math.floor(i / perRow);
+    const idxInRow = i % perRow;
+    // stagger alternate rows so coins nestle into the gaps below (a settled pile, not a grid)
+    const stagger = (row % 2) ? coinW/2 : 0;
+    const slots = perRow;
+    const usable = w - coinW;
+    let x = x0 + coinW/2 + (idxInRow / Math.max(1, slots-1)) * usable + stagger;
+    // small deterministic horizontal jitter so it looks natural, not mechanical
+    x += (seeded(i, salt) - 0.5) * 2.4;
+    // clamp inside the walls
+    x = Math.max(x0 + st.rx + 1, Math.min(x1 - st.rx - 1, x));
+    // y stacks up from the floor; bottom row rests right on it
+    const y = yBot - st.ry - row*rowH - (seeded(i, salt+5)-0.5)*1.2;
+
+    dots += `<g><ellipse cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" rx="${st.rx}" ry="${st.ry}" fill="${st.fill}" opacity="0.96" stroke="rgba(0,0,0,.3)" stroke-width=".5"/>`
+      + `<ellipse cx="${(x-st.rx*0.3).toFixed(1)}" cy="${(y-st.ry*0.35).toFixed(1)}" rx="${(st.rx*0.45).toFixed(1)}" ry="${(st.ry*0.35).toFixed(1)}" fill="${st.sheen}" opacity="0.5"/></g>`;
   }
-  return `<svg class="jar-svg" viewBox="0 0 80 100" preserveAspectRatio="xMidYMid meet">
-    <rect x="28" y="8" width="24" height="7" rx="2" fill="none" stroke="#c9bca3" stroke-width="1.6" opacity=".7"/>
-    <path d="M16 20 Q16 16 20 16 L60 16 Q64 16 64 20 L64 90 Q64 94 60 94 L20 94 Q16 94 16 90 Z"
-          fill="rgba(255,255,255,.03)" stroke="#c9bca3" stroke-width="1.6" opacity=".85"/>
-    <clipPath id="clip-${key}"><path d="M17 20 L63 20 L63 92 Q63 93 60 93 L20 93 Q17 93 17 92 Z"/></clipPath>
-    <g clip-path="url(#clip-${key})">
-      <rect x="16" y="${level}" width="48" height="${(jarBot-level+4).toFixed(1)}" fill="${c}" opacity=".22"/>
-      ${dots}
+  return dots;
+}
+
+function jarSVG(items, max, key){
+  const count = items.length;
+  const ratio = max>0 ? Math.min(1, count/max) : 0;
+  // each vessel is drawn in a 80x130 viewBox, themed uniquely
+  if (key === "open")     return jarOpen(items, ratio);
+  if (key === "standing") return jarStanding(items, ratio);
+  if (key === "kept")     return jarKept(items, ratio);
+  if (key === "broken")   return jarBroken(items, ratio);
+  return "";
+}
+
+// OPEN — a wide, open-mouthed inviting bowl/jar, no stopper, warm glass
+function jarOpen(items, ratio){
+  const top=34, bot=116, level = bot - (bot-top)*ratio;
+  return `<svg class="jar-vessel" viewBox="0 0 80 130" preserveAspectRatio="xMidYMid meet">
+    <defs><clipPath id="clip-open"><path d="M12 40 Q12 36 18 36 L62 36 Q68 36 68 40 L66 116 Q66 122 60 122 L20 122 Q14 122 14 116 Z"/></clipPath></defs>
+    <!-- flared open rim -->
+    <path d="M8 38 Q40 26 72 38" fill="none" stroke="#d8b06a" stroke-width="2.2" opacity=".85"/>
+    <!-- body, open and rounded -->
+    <path d="M12 40 Q12 36 18 36 L62 36 Q68 36 68 40 L66 116 Q66 122 60 122 L20 122 Q14 122 14 116 Z"
+          fill="rgba(216,176,106,.05)" stroke="#d8b06a" stroke-width="1.8" opacity=".8"/>
+    <g clip-path="url(#clip-open)">
+      <rect x="12" y="100" width="56" height="22" fill="#c9a06a" opacity=".14"/>
+      ${coinPile(items, 14, 66, 121, level, "#d8b06a", 1)}
     </g>
+  </svg>`;
+}
+
+// STANDING — a tall, firm, square-shouldered stone vessel; banded, immovable
+function jarStanding(items, ratio){
+  const top=30, bot=118, level = bot - (bot-top)*ratio;
+  return `<svg class="jar-vessel" viewBox="0 0 80 130" preserveAspectRatio="xMidYMid meet">
+    <defs><clipPath id="clip-standing"><path d="M18 32 L62 32 L62 118 L18 118 Z"/></clipPath></defs>
+    <!-- heavy squared stopper -->
+    <rect x="26" y="16" width="28" height="12" rx="1.5" fill="none" stroke="#b3a0cf" stroke-width="2" opacity=".8"/>
+    <!-- firm pillar body -->
+    <path d="M18 32 L62 32 L62 118 Q62 120 60 120 L20 120 Q18 120 18 118 Z"
+          fill="rgba(125,106,156,.06)" stroke="#b3a0cf" stroke-width="2" opacity=".85"/>
+    <!-- stone banding -->
+    <line x1="18" y1="58" x2="62" y2="58" stroke="#b3a0cf" stroke-width="1" opacity=".4"/>
+    <line x1="18" y1="88" x2="62" y2="88" stroke="#b3a0cf" stroke-width="1" opacity=".4"/>
+    <g clip-path="url(#clip-standing)">
+      <rect x="18" y="102" width="44" height="16" fill="#7d6a9c" opacity=".16"/>
+      ${coinPile(items, 18, 62, 119, level, "#b3a0cf", 2)}
+    </g>
+  </svg>`;
+}
+
+// KEPT — an elevated, uplifted chalice on a raised foot; angelic, light
+function jarKept(items, ratio){
+  const top=40, bot=104, level = bot - (bot-top)*ratio;
+  return `<svg class="jar-vessel" viewBox="0 0 80 130" preserveAspectRatio="xMidYMid meet">
+    <defs><clipPath id="clip-kept"><path d="M16 44 Q16 40 22 40 L58 40 Q64 40 64 44 L58 104 Q58 106 54 106 L26 106 Q22 106 22 104 Z"/></clipPath></defs>
+    <!-- raised foot / pedestal -->
+    <path d="M30 118 L50 118 L46 110 L34 110 Z" fill="none" stroke="#9fc59a" stroke-width="1.6" opacity=".8"/>
+    <line x1="40" y1="106" x2="40" y2="110" stroke="#9fc59a" stroke-width="1.6" opacity=".8"/>
+    <!-- chalice bowl -->
+    <path d="M16 44 Q16 40 22 40 L58 40 Q64 40 64 44 L58 104 Q58 106 54 106 L26 106 Q22 106 22 104 Z"
+          fill="rgba(159,197,154,.05)" stroke="#9fc59a" stroke-width="1.8" opacity=".85"/>
+    <g clip-path="url(#clip-kept)">
+      <rect x="16" y="90" width="48" height="16" fill="#6f8f6a" opacity=".16"/>
+      ${coinPile(items, 20, 60, 105, level, "#9fc59a", 3)}
+    </g>
+  </svg>`;
+}
+
+// DEAD — a cracked, amber funerary urn with a headstone-arched top; somber
+function jarBroken(items, ratio){
+  const top=38, bot=116, level = bot - (bot-top)*ratio;
+  return `<svg class="jar-vessel" viewBox="0 0 80 130" preserveAspectRatio="xMidYMid meet">
+    <defs><clipPath id="clip-broken"><path d="M16 56 Q16 38 40 38 Q64 38 64 56 L62 116 Q62 120 58 120 L22 120 Q18 120 18 116 Z"/></clipPath></defs>
+    <!-- headstone-arched urn body -->
+    <path d="M16 56 Q16 38 40 38 Q64 38 64 56 L62 116 Q62 120 58 120 L22 120 Q18 120 18 116 Z"
+          fill="rgba(120,80,70,.10)" stroke="#a6584f" stroke-width="1.8" opacity=".8"/>
+    <!-- a crack -->
+    <path d="M44 40 l-5 16 l4 10 l-6 14" fill="none" stroke="#a6584f" stroke-width="1" opacity=".5"/>
+    <g clip-path="url(#clip-broken)">
+      <rect x="16" y="100" width="48" height="20" fill="#6e3a34" opacity=".2"/>
+      ${coinPile(items, 18, 62, 119, level, "#a6584f", 4)}
+    </g>
+  </svg>`;
+}
+
+// FAVORS — a shallow offering dish on a stem; coins given out, not stored. Bearer tokens.
+function vesselFavors(items){
+  const coins = coinPile(items, 22, 58, 90, 70, "#d8b06a", 7);
+  return `<svg class="jar-vessel" viewBox="0 0 80 130" preserveAspectRatio="xMidYMid meet">
+    <defs><clipPath id="clip-favors"><path d="M16 64 Q40 98 64 64 Z"/></clipPath></defs>
+    <!-- offering dish: a wide shallow bowl, open upward -->
+    <path d="M10 62 Q40 70 70 62" fill="none" stroke="#d8b06a" stroke-width="2.2" opacity=".9"/>
+    <path d="M16 64 Q40 98 64 64" fill="rgba(216,176,106,.05)" stroke="#d8b06a" stroke-width="2" opacity=".85"/>
+    <!-- stem + foot -->
+    <line x1="40" y1="96" x2="40" y2="110" stroke="#d8b06a" stroke-width="2" opacity=".8"/>
+    <path d="M28 114 Q40 108 52 114" fill="none" stroke="#d8b06a" stroke-width="2" opacity=".8"/>
+    <g clip-path="url(#clip-favors)">${coins}</g>
+    <!-- a coin lifting away (being given) -->
+    <g opacity=".7"><ellipse cx="58" cy="46" rx="3.4" ry="2.9" fill="#e8c987" stroke="rgba(0,0,0,.25)" stroke-width=".5"/><ellipse cx="57" cy="45" rx="1.5" ry="1" fill="#f0d98a" opacity=".6"/></g>
+  </svg>`;
+}
+
+// MEMORIAL — a standing lantern holding a soft flame; the remembered kept in light.
+function vesselMemorial(count){
+  return `<svg class="jar-vessel" viewBox="0 0 80 130" preserveAspectRatio="xMidYMid meet">
+    <!-- lantern cap -->
+    <path d="M30 26 L50 26 L46 32 L34 32 Z" fill="none" stroke="#b3a0cf" stroke-width="2" opacity=".8"/>
+    <line x1="40" y1="20" x2="40" y2="26" stroke="#b3a0cf" stroke-width="2" opacity=".8"/>
+    <!-- lantern body / glass housing -->
+    <rect x="28" y="32" width="24" height="62" rx="3" fill="rgba(125,106,156,.05)" stroke="#b3a0cf" stroke-width="2" opacity=".85"/>
+    <line x1="28" y1="46" x2="52" y2="46" stroke="#b3a0cf" stroke-width="1" opacity=".4"/>
+    <line x1="28" y1="80" x2="52" y2="80" stroke="#b3a0cf" stroke-width="1" opacity=".4"/>
+    <!-- base -->
+    <path d="M24 98 L56 98 L52 94 L28 94 Z" fill="none" stroke="#b3a0cf" stroke-width="2" opacity=".8"/>
+    <!-- the flame: one steady light for the remembered -->
+    <g class="mem-flame">
+      <ellipse cx="40" cy="68" rx="9" ry="13" fill="rgba(220,200,150,.22)"/>
+      <path d="M40 54 Q47 64 40 78 Q33 64 40 54 Z" fill="#e6cf94" opacity=".85"/>
+      <path d="M40 60 Q44 66 40 76 Q36 66 40 60 Z" fill="#fff4d6" opacity=".9"/>
+    </g>
+    <text x="40" y="114" text-anchor="middle" font-family="ui-monospace,monospace" font-size="9" fill="#b3a0cf" opacity=".7">${count} held</text>
   </svg>`;
 }
 
@@ -594,35 +1067,104 @@ function render(){
   const favorCount = state.promises.filter(p=>p.favor).length;
   const favorOutstanding = state.promises.filter(p=>p.favor && p.status==="outstanding").length;
 
-  // jars
+  // ----- top tab bar state -----
+  $("#tabbar").querySelectorAll(".tab").forEach(t=>{
+    t.classList.toggle("active", t.dataset.tab === currentTab);
+  });
+  $("#favorsBadge").textContent = favorCount ? favorCount : "";
+  $("#memorialBadge").textContent = state.memorial.length ? state.memorial.length : "";
+
+  // show/hide the jars row + worklist depending on tab
+  const inJars = currentTab === "jars";
+  $("#jars").style.display = inJars ? "" : "none";
+  $("#loadHint").style.display = inJars ? "" : "none";
+  $("#worklist").style.display = inJars ? "" : "none";
+
+  // ambient effect markup per theme
+  // three eternity symbols from different traditions, drawn in one hand, rising through the jar:
+  //   ouroboros (Egyptian/Greek) · Jera rune (Norse eternal cycle) · lemniscate (the eternity-mark)
+  const etGlyph = {
+    ouroboros: `<svg viewBox="0 0 24 24" class="et-svg"><circle cx="12" cy="12" r="7.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-dasharray="40 6"/><path d="M5.2 9.5 L3 8.2 M5.2 9.5 L4 11.8 M5.2 9.5 L7.4 9" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>`,
+    jera: `<svg viewBox="0 0 24 24" class="et-svg"><path d="M7 5 L13 9 L7 13 M17 19 L11 15 L17 11" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>`,
+    lemniscate: `<svg viewBox="0 0 24 24" class="et-svg"><path d="M12 12 C 8 8, 3 8, 3 12 C 3 16, 8 16, 12 12 C 16 8, 21 8, 21 12 C 21 16, 16 16, 12 12 Z" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>`
+  };
+  const ambient = {
+    open: `<span class="mote"></span><span class="mote"></span><span class="mote"></span>`,
+    standing: `<span class="rune r1">${etGlyph.ouroboros}</span><span class="rune r2">${etGlyph.jera}</span><span class="rune r3">${etGlyph.lemniscate}</span>`,
+    kept: `<span class="halo"></span><span class="ray" style="left:32%; transform:rotate(-16deg)"></span><span class="ray" style="left:50%"></span><span class="ray" style="left:68%; transform:rotate(16deg)"></span>`,
+    broken: `<span class="miasma m1"></span><span class="miasma m2"></span><span class="miasma m3"></span>`
+  };
+
+  // jars (only meaningful in the Jars tab, but always rendered so counts stay warm)
   $("#jars").innerHTML = JAR_DEFS.map(j=>{
-    const n = counts[j.key];
+    const items = state.promises.filter(p => !p.favor && p.status === j.key);
+    const n = items.length;
     const grams = n * DISC_GRAMS * WEIGHTS[j.key];
-    return `<div class="jar-card ${activeJar===j.key?'active':''}" data-jar="${j.key}">
-      ${jarSVG(n, max, j.key)}
+    const isActive = inJars && activeJar===j.key;
+    return `<div class="jar-card theme-${j.key} ${isActive?'active':''}" data-jar="${j.key}">
+      <span class="jar-ambient">${ambient[j.key]||""}</span>
+      ${jarSVG(items, max, j.key)}
       <div class="jar-name">${j.label}</div>
       <div class="jar-count">${n}</div>
       <div class="jar-weight">${grams} g</div>
     </div>`;
   }).join("");
   $("#jars").querySelectorAll(".jar-card").forEach(el=>{
-    el.onclick = ()=>{ activeJar = el.dataset.jar; render(); };
+    el.onclick = ()=>{ activeJar = el.dataset.jar; currentTab = "jars"; render(); };
   });
 
-  // favors tab (separate from the four jars)
-  const ft = $("#favorTab");
-  if (ft){
-    ft.className = "favor-tab" + (activeJar==="favors" ? " active" : "");
-    ft.innerHTML = `<span class="ft-label">Favors owed</span>
-      <span class="ft-count">${favorCount}</span>
-      <span class="ft-sub">${favorOutstanding} outstanding</span>`;
-    ft.onclick = ()=>{ activeJar = "favors"; render(); };
+  // the weight you carry right now = open + standing discs (standing weighted x3)
+  const carriedEl = $("#carried"), reckEl = $("#reckoning");
+  if (inJars){
+    const carriedGrams = state.promises
+      .filter(p=>!p.favor && (p.status==="open"||p.status==="standing"))
+      .reduce((sum,p)=> sum + DISC_GRAMS * WEIGHTS[p.status], 0);
+    carriedEl.style.display = "";
+    carriedEl.innerHTML = carriedGrams
+      ? `the weight you carry now · <span class="cw">${carriedGrams} g</span>`
+      : "";
+
+    // reckoning: open (not standing) promises untouched for 90+ days
+    const DAY = 86400000, THRESH = 90;
+    const stale = state.promises.filter(p=>!p.favor && p.status==="open" && p.date_made
+      && (Date.now() - new Date(p.date_made).getTime())/DAY >= THRESH)
+      .sort((a,b)=> new Date(a.date_made) - new Date(b.date_made));
+    if (stale.length){
+      reckEl.style.display = "";
+      reckEl.innerHTML = `<div class="reckoning">
+        <div class="rk-title">A reckoning is due</div>
+        <div class="rk-sub">${stale.length} open promise${stale.length>1?'s have':' has'} gone quiet for 90+ days. Still alive? Keep, let go, or recommit — don't let them drift.</div>
+        <div class="rk-list">${stale.slice(0,6).map(p=>{
+          const age = Math.floor((Date.now()-new Date(p.date_made).getTime())/DAY);
+          return `<div class="rk-row"><span class="disc">${discLabel(p)}</span><span>${escapeHtml(p.text.slice(0,46))}${p.text.length>46?'…':''}</span><span class="rk-age">${age}d</span></div>`;
+        }).join("")}</div>
+      </div>`;
+    } else { reckEl.style.display="none"; reckEl.innerHTML=""; }
+  } else {
+    carriedEl.style.display = "none";
+    reckEl.style.display = "none";
   }
+
+  // ----- which list to show, by tab -----
+  // MEMORIAL VIEW — people, not promise-discs.
+  if (currentTab === "memorial"){
+    $(".toolbar") && ($(".toolbar").style.display = "none");
+    renderMemorial();
+    return;
+  }
+  // LEDGER VIEW — the chart over time.
+  if (currentTab === "ledger"){
+    $(".toolbar") && ($(".toolbar").style.display = "none");
+    renderLedger();
+    return;
+  }
+  if ($(".toolbar")) $(".toolbar").style.display = "";
+  if ($(".filters")) $(".filters").style.display = (currentTab === "jars") ? "" : "none";
 
   // list
   const q = $("#search").value.trim().toLowerCase();
   let rows;
-  if (activeJar === "favors"){
+  if (currentTab === "favors"){
     rows = state.promises
       .filter(p => p.favor)
       .filter(p => !q || (p.text||"").toLowerCase().includes(q) || (p.name||"").toLowerCase().includes(q) || (p.verify||"").includes(q) || String(p.disc)===q)
@@ -632,23 +1174,28 @@ function render(){
       .filter(p => !p.favor && p.status === activeJar)
       .filter(p => whoFilter==="all" ? true : p.who===whoFilter)
       .filter(p => !q || p.text.toLowerCase().includes(q) || (p.name||"").toLowerCase().includes(q) || ("d"+p.disc).includes(q) || String(p.disc)===q)
-      .sort((a,b)=> b.disc - a.disc);
+      .sort((a,b)=> (isKeystone(b)?1:0) - (isKeystone(a)?1:0) || b.disc - a.disc);
   }
 
+  const listKey = currentTab === "favors" ? "favors" : activeJar;
   const list = $("#list");
+  const favorsBanner = currentTab === "favors"
+    ? `<div class="favors-vessel-wrap"><span class="tab-vessel">${vesselFavors(state.promises.filter(p=>p.favor))}</span></div>`
+      + `<div class="favors-banner"><span class="ft-title">Favors owed.</span> Bearer tokens you've handed out — whoever holds the disc may redeem it. They outlive the people you gave them to.</div>`
+    : "";
   if (rows.length === 0){
     const msgs = {
-      open: "No open promises. Make one — it'll land here.",
-      standing: "No standing promises yet. These are the forever ones.",
-      kept: "Nothing kept yet. Honor an open promise and it moves here.",
-      broken: "Nothing broken. Long may it stay that way.",
-      favors: "No favor tokens yet. Make one to hand out as an IOU."
+      open: "Nothing open. Every promise is either still carried or already answered for.",
+      standing: "No standing promises yet. These are the ones with no end — the weight you choose to carry for life.",
+      kept: "Nothing kept yet. Honor an open promise and its disc comes to rest here.",
+      broken: "No dead promises. The thread holds, for now. (This jar is for the dead — kept apart from the memorial vessel for those who have died.)",
+      favors: "No favor tokens yet. Make one to hand out — a debt you choose to owe."
     };
-    list.innerHTML = `<div class="empty">${msgs[activeJar]}</div>`;
+    list.innerHTML = favorsBanner + `<div class="empty">${msgs[listKey]}</div>`;
     return;
   }
 
-  list.innerHTML = rows.map(p=>{
+  list.innerHTML = favorsBanner + rows.map(p=>{
     const cls = [p.favor?"favor":p.who, p.status==="kept"?"done":"", p.status==="broken"?"broken":""].join(" ");
     const tier = TIERS[p.tier] || TIERS.ordinary;
     const tierTag = `<span class="metaltag t-${p.tier||'ordinary'}">${tier.metal}</span>`;
@@ -658,10 +1205,20 @@ function render(){
     let dateline = `made ${fmt(p.date_made)}`;
     if (p.date_closed) dateline += ` · ${p.status} ${fmt(p.date_closed)}`;
     const reason = p.reason ? `<span class="reason">“${escapeHtml(p.reason)}”</span>` : "";
+    const keywordTag = p.keyword
+      ? `<span class="keywordtag" title="hand-engrave above the number">${escapeHtml(p.keyword)}</span>` : "";
+    const gone = !p.favor && p.who==="other" && p.name &&
+      state.memorial.some(m => (m.name||"").trim().toLowerCase() === (p.name||"").trim().toLowerCase());
+    const goneTag = gone
+      ? `<span class="gonetag" title="this person is in the memorial — add the death glyph">☉ death glyph</span>` : "";
+    const keystoneTag = isKeystone(p)
+      ? `<span class="keystonetag" title="the founding promise — it judges all the others">✦ keystone</span>` : "";
+    const reforgeTag = p.needsReforge
+      ? `<span class="reforgetag" title="promoted to standing — the physical disc should be re-stamped in copper">⚒ re-forge in copper</span>` : "";
 
     if (p.favor){
       // favor / bearer token
-      const stateLabels = { outstanding:"outstanding", redeemed:"redeemed — owe the favor", kept:"done", broken:"broken" };
+      const stateLabels = { outstanding:"outstanding", redeemed:"redeemed — owe the favor", kept:"done", broken:"dead" };
       const stateTag = `<span class="favorstate s-${p.status}">${stateLabels[p.status]||p.status}</span>`;
       const verifyTag = p.verify
         ? `<span class="verifytag" title="hand-engrave on the back">back: ${p.verify}</span>` : "";
@@ -675,10 +1232,12 @@ function render(){
           <div class="meta">
             <span class="disc">${discLabel(p)}</span>
             ${tierTag}
+            ${keywordTag}
             ${nameTag}
             ${stateTag}
             ${verifyTag}
             ${stampTag}
+            ${goneTag}
             <span>${dateline}</span>
             ${reason}
           </div>
@@ -690,15 +1249,19 @@ function render(){
     const whoLabel = p.who==="self" ? "to myself"
                    : (p.name ? "to "+escapeHtml(p.name) : "to someone");
     const whoTag = `<span class="tag ${p.who}">${whoLabel}</span>`;
-    return `<div class="entry ${cls}">
+    return `<div class="entry ${cls} ${isKeystone(p)?'keystone':''}">
       <div class="spine"></div>
       <div class="body">
         <div class="text">${escapeHtml(p.text)}</div>
         <div class="meta">
           <span class="disc">${discLabel(p)}</span>
           ${tierTag}
+          ${keystoneTag}
+          ${keywordTag}
           ${whoTag}
           ${stampTag}
+          ${reforgeTag}
+          ${goneTag}
           <span>${dateline}</span>
           ${reason}
         </div>
@@ -712,22 +1275,240 @@ function render(){
   });
 }
 
+/* ---------- memorial (the vessel for people who have died) ---------- */
+// Promises made to a given person (by name, case-insensitive).
+function promisesForPerson(name){
+  const key = (name||"").trim().toLowerCase();
+  return state.promises.filter(p => !p.favor && p.who==="other" && (p.name||"").trim().toLowerCase()===key);
+}
+function renderMemorial(){
+  const list = $("#list");
+  const people = state.memorial.slice().sort((a,b)=> (b.date_gone||"").localeCompare(a.date_gone||""));
+  let html = `<div class="mem-vessel-wrap"><span class="tab-vessel">${vesselMemorial(state.memorial.length)}</span></div>`
+    + `<div class="mem-banner-glow"><div class="mem-intro" style="margin-bottom:0; border:none; background:none; padding:0;">The memorial vessel holds those who have died — kept
+    apart from the dead-promises jar, because the dead are not failures. Marking someone here
+    adds the <em>death glyph</em> to each promise you made to them, and calls for a memorial
+    disc (their name + the death glyph + the date) to rest in this separate vessel.
+    <div style="margin-top:10px;"><button class="btn gold sm" data-mem="add">＋ Remember someone</button></div>
+  </div></div>`;
+
+  if (people.length === 0){
+    html += `<div class="empty">No one remembered here yet. May it stay that way a long while.</div>`;
+  } else {
+    html += people.map(person=>{
+      const proms = promisesForPerson(person.name);
+      const kept = proms.filter(p=>p.status==="kept").length;
+      const promRows = proms.length
+        ? proms.sort((a,b)=>a.disc-b.disc).map(p=>{
+            const tier = TIERS[p.tier] || TIERS.ordinary;
+            const fate = p.status==="kept" ? "kept — though they are gone"
+                       : p.status==="broken" ? "died unkept"
+                       : p.status;
+            return `<div class="mem-prom">
+              <span class="disc">${discLabel(p)}</span>
+              <span class="mem-prom-text">${escapeHtml(p.text)}</span>
+              <span class="mem-fate ${p.status}">${fate}</span>
+            </div>`;
+          }).join("")
+        : `<div class="mem-prom tbd">No promises recorded to this person.</div>`;
+      return `<div class="mem-card">
+        <div class="mem-head">
+          <div>
+            <div class="mem-name">${escapeHtml(person.name)}</div>
+            <div class="mem-date">died ${person.date_gone ? fmt(person.date_gone) : "—"}${proms.length?` · ${proms.length} promise${proms.length>1?'s':''}, ${kept} kept`:''}</div>
+          </div>
+          <div class="mem-actions">
+            <button class="btn ghost sm" data-mem="edit" data-name="${encodeURIComponent(person.name)}">Edit</button>
+            <button class="btn ghost sm" data-mem="remove" data-name="${encodeURIComponent(person.name)}">Remove</button>
+          </div>
+        </div>
+        ${person.note ? `<div class="mem-note">“${escapeHtml(person.note)}”</div>` : ""}
+        <div class="mem-proms">${promRows}</div>
+        <div class="mem-discnote">Memorial disc: <span class="hl">${escapeHtml(person.name)}</span> + death glyph + ${person.date_gone?fmt(person.date_gone):"date"} — engrave and place in the memorial vessel.</div>
+      </div>`;
+    }).join("");
+  }
+  list.innerHTML = html;
+  list.querySelectorAll("[data-mem]").forEach(b=>{
+    b.onclick = ()=> memorialAction(b.dataset.mem, b.dataset.name ? decodeURIComponent(b.dataset.name) : null);
+  });
+}
+
+/* ---------- ledger: what you've taken on, kept, and let die over time ---------- */
+function renderLedger(){
+  const list = $("#list");
+  const useWeight = ledgerMetric === "weight";
+  // weight contribution: standing x3, everything else x1 (symbolic grams); count mode = 1 each
+  const wOf = p => {
+    if (!useWeight) return 1;
+    return DISC_GRAMS * (p.tier==="standing" ? 3 : 1);
+  };
+
+  // build dated events: every non-favor promise contributes a "bound" event at date_made,
+  // and a "kept" or "died" event at date_closed.
+  const bound = [], kept = [], died = [];
+  state.promises.filter(p=>!p.favor).forEach(p=>{
+    if (p.date_made) bound.push({ t:+new Date(p.date_made), v:wOf(p) });
+    if (p.date_closed && p.status==="kept") kept.push({ t:+new Date(p.date_closed), v:wOf(p) });
+    if (p.date_closed && p.status==="broken") died.push({ t:+new Date(p.date_closed), v:wOf(p) });
+  });
+
+  const totalBound = bound.reduce((s,e)=>s+e.v,0);
+  const totalKept = kept.reduce((s,e)=>s+e.v,0);
+  const totalDied = died.reduce((s,e)=>s+e.v,0);
+  const unit = useWeight ? " g" : "";
+
+  let chart;
+  if (bound.length === 0){
+    chart = `<div class="empty">No history yet. Bind a promise and the ledger begins to draw itself.</div>`;
+  } else {
+    chart = buildChartSVG(bound, kept, died, useWeight);
+  }
+
+  list.innerHTML = `
+    <div class="ledger-head">
+      <span class="ledger-title">The ledger over time</span>
+      <span class="ledger-toggle">
+        <span class="chip ${useWeight?'on':''}" data-metric="weight">Weight</span>
+        <span class="chip ${!useWeight?'on':''}" data-metric="count">Count</span>
+      </span>
+    </div>
+    <div class="chart-wrap">
+      ${chart}
+      <div class="chart-legend">
+        <span><i style="background:var(--gold)"></i>Taken on</span>
+        <span><i style="background:var(--self)"></i>Kept</span>
+        <span><i style="background:var(--broken)"></i>Died</span>
+      </div>
+    </div>
+    <div class="ledger-stats">
+      <div class="lstat bound"><div class="lv">${totalBound}${unit}</div><div class="ll">Taken on</div></div>
+      <div class="lstat kept"><div class="lv">${totalKept}${unit}</div><div class="ll">Kept</div></div>
+      <div class="lstat died"><div class="lv">${totalDied}${unit}</div><div class="ll">Died</div></div>
+    </div>
+    <p class="hint">Cumulative since your first promise. ${useWeight?'Weight counts standing promises ×3.':'Each promise counts once.'}</p>
+  `;
+  list.querySelectorAll("[data-metric]").forEach(c=>{
+    c.onclick = ()=>{ ledgerMetric = c.dataset.metric; renderLedger(); };
+  });
+}
+
+// build a cumulative line chart as inline SVG
+function buildChartSVG(bound, kept, died, useWeight){
+  const W = 640, H = 240, padL = 40, padR = 14, padT = 14, padB = 26;
+  const plotW = W - padL - padR, plotH = H - padT - padB;
+
+  // time domain
+  const allT = [...bound, ...kept, ...died].map(e=>e.t);
+  let tMin = Math.min(...allT), tMax = Math.max(...allT);
+  // include "now" so the lines run to today
+  tMax = Math.max(tMax, Date.now());
+  if (tMin === tMax) { tMin -= 86400000; tMax += 86400000; }
+
+  // cumulative series: sort events, accumulate
+  const cum = (arr)=>{
+    const s = arr.slice().sort((a,b)=>a.t-b.t);
+    let run = 0; const pts = [];
+    s.forEach(e=>{ run += e.v; pts.push({ t:e.t, y:run }); });
+    return { pts, total: run };
+  };
+  const B = cum(bound), K = cum(kept), D = cum(died);
+  const yMax = Math.max(1, B.total, K.total, D.total);
+
+  const xOf = t => padL + ((t - tMin)/(tMax - tMin)) * plotW;
+  const yOf = v => padT + plotH - (v/yMax) * plotH;
+
+  // step-line path that runs flat to the end (cumulative holds until next event)
+  const pathFor = (series)=>{
+    if (!series.pts.length) return "";
+    let d = `M ${xOf(tMin).toFixed(1)} ${yOf(0).toFixed(1)}`;
+    let prevY = 0;
+    series.pts.forEach(pt=>{
+      d += ` L ${xOf(pt.t).toFixed(1)} ${yOf(prevY).toFixed(1)}`;   // horizontal to event time
+      d += ` L ${xOf(pt.t).toFixed(1)} ${yOf(pt.y).toFixed(1)}`;     // step up
+      prevY = pt.y;
+    });
+    d += ` L ${xOf(tMax).toFixed(1)} ${yOf(prevY).toFixed(1)}`;      // hold to now
+    return d;
+  };
+
+  // y gridlines (4)
+  let grid = "";
+  for (let i=0;i<=4;i++){
+    const v = (yMax/4)*i, y = yOf(v);
+    grid += `<line x1="${padL}" y1="${y.toFixed(1)}" x2="${W-padR}" y2="${y.toFixed(1)}" stroke="rgba(201,188,163,.12)" stroke-width="1"/>`;
+    grid += `<text x="${padL-6}" y="${(y+3).toFixed(1)}" text-anchor="end" font-family="ui-monospace,monospace" font-size="9" fill="#8c8273">${Math.round(v)}</text>`;
+  }
+  // x axis labels: first and last date
+  const fmtD = t => new Date(t).toLocaleDateString(undefined,{month:'short',year:'2-digit'});
+  const xLabels = `<text x="${padL}" y="${H-8}" font-family="ui-monospace,monospace" font-size="9" fill="#8c8273">${fmtD(tMin)}</text>
+    <text x="${W-padR}" y="${H-8}" text-anchor="end" font-family="ui-monospace,monospace" font-size="9" fill="#8c8273">${fmtD(tMax)}</text>`;
+
+  const line = (series,color)=> series.pts.length
+    ? `<path d="${pathFor(series)}" fill="none" stroke="${color}" stroke-width="2.4" stroke-linejoin="round" opacity=".9"/>` : "";
+
+  return `<svg viewBox="0 0 ${W} ${H}" width="100%" preserveAspectRatio="xMidYMid meet" style="display:block">
+    ${grid}
+    ${line(B, "#c9a24b")}
+    ${line(D, "#a6584f")}
+    ${line(K, "#6f8f6a")}
+    ${xLabels}
+  </svg>`;
+}
+function memorialAction(act, name){
+  if (act==="add" || act==="edit"){
+    const existing = name ? state.memorial.find(m=>m.name===name) : null;
+    const who = prompt("Name of the person who has died:", existing ? existing.name : "");
+    if (who===null) return;
+    const nm = who.trim();
+    if (!nm){ toast("Need a name."); return; }
+    const when = prompt("Date they died (YYYY-MM-DD, or leave blank):", existing && existing.date_gone ? existing.date_gone.slice(0,10) : "");
+    if (when===null) return;
+    const note = prompt("A line of remembrance (optional):", existing ? (existing.note||"") : "");
+    if (note===null) return;
+    let date_gone = "";
+    if (when.trim()){
+      const d = new Date(when.trim());
+      date_gone = isNaN(d.getTime()) ? "" : d.toISOString();
+      if (!date_gone) toast("Couldn't read that date — saved without one.");
+    }
+    if (existing){
+      existing.name = nm; existing.date_gone = date_gone; existing.note = note.trim();
+      toast("Memorial updated.");
+    } else {
+      state.memorial.push({ name: nm, date_gone, note: note.trim() });
+      const n = promisesForPerson(nm).length;
+      toast(n ? `${nm} remembered. ${n} promise${n>1?'s':''} now carry the death glyph.` : `${nm} remembered.`);
+    }
+    currentTab = "memorial";   // make sure the memorial view is showing
+    save();
+  }
+  else if (act==="remove"){
+    const m = state.memorial.find(x=>x.name===name);
+    if (!m) return;
+    if (confirm(`Remove ${name} from the memorial? This doesn't change any promise discs.`)){
+      state.memorial = state.memorial.filter(x=>x.name!==name);
+      save(); toast("Removed from memorial.");
+    }
+  }
+}
+
 function actionsFor(p){
   const id = p.id;
   const b = (act,label,cls="ghost")=>`<button class="btn ${cls} sm" data-act="${act}" data-id="${id}">${label}</button>`;
   const stampBtn = p.stamped ? b("unstamp","Unstamp") : b("stamp","Mark stamped","gold");
   if (p.favor){
-    // favor lifecycle: outstanding → redeemed → kept (broken = failed)
+    // favor lifecycle: outstanding → redeemed → kept (broken = failed). Terminal states are final.
     if (p.status==="outstanding") return stampBtn+b("redeem","Mark redeemed","gold")+b("break","Broke it")+b("edit","Edit");
     if (p.status==="redeemed")    return stampBtn+b("keep","Favor done ✓","gold")+b("break","Broke it")+b("edit","Edit");
-    if (p.status==="kept")        return stampBtn+b("reopen","Reopen")+b("edit","Edit");
-    if (p.status==="broken")      return stampBtn+b("reopen","Reopen")+b("edit","Edit");
+    if (p.status==="kept")        return stampBtn+b("edit","Edit");
+    if (p.status==="broken")      return stampBtn+b("edit","Edit");
     return "";
   }
   if (p.status==="open")     return stampBtn+b("keep","Kept ✓")+b("standing","Make standing")+b("break","Broke it")+b("edit","Edit");
   if (p.status==="standing") return stampBtn+b("break","Let go")+b("edit","Edit");
-  if (p.status==="kept")     return stampBtn+b("reopen","Reopen")+b("edit","Edit");
-  if (p.status==="broken")   return stampBtn+b("reopen","Reopen")+b("edit","Edit");
+  if (p.status==="kept")     return stampBtn+b("edit","Edit");
+  if (p.status==="broken")   return stampBtn+b("edit","Edit");
   return "";
 }
 
@@ -742,53 +1523,152 @@ function discFaceSVG(p, side){
   const { face, edge, ink } = tier;
   const label = discLabel(p);
   const R = 90, cx = 100, cy = 100;
-  // metal disc base: outer edge ring + inner face
+  // unique gradient id per disc+side so multiple discs don't collide
+  const gid = `mt-${p.id||p.disc}-${side}`;
+  // a lighter tint of the face for the sheen highlight
+  const lighten = (hex)=>{
+    const n = parseInt(hex.slice(1),16); let r=(n>>16)&255,g=(n>>8)&255,b=n&255;
+    r=Math.min(255,r+45); g=Math.min(255,g+45); b=Math.min(255,b+45);
+    return `rgb(${r},${g},${b})`;
+  };
+  // metal disc base: edge ring + radially-shaded face + sheen + rim
   let inner = `
+    <defs>
+      <radialGradient id="${gid}" cx="38%" cy="32%" r="75%">
+        <stop offset="0%" stop-color="${lighten(face)}"/>
+        <stop offset="55%" stop-color="${face}"/>
+        <stop offset="100%" stop-color="${edge}"/>
+      </radialGradient>
+    </defs>
     <circle cx="${cx}" cy="${cy}" r="${R}" fill="${edge}"/>
-    <circle cx="${cx}" cy="${cy}" r="${R-7}" fill="${face}"/>
-    <circle cx="${cx}" cy="${cy}" r="${R-7}" fill="none" stroke="rgba(0,0,0,.12)" stroke-width="1.5"/>
+    <circle cx="${cx}" cy="${cy}" r="${R-7}" fill="url(#${gid})"/>
+    <ellipse cx="${cx-26}" cy="${cy-30}" rx="34" ry="22" fill="${lighten(face)}" opacity=".28"/>
+    <circle cx="${cx}" cy="${cy}" r="${R-7}" fill="none" stroke="rgba(0,0,0,.16)" stroke-width="1.5"/>
+    <circle cx="${cx}" cy="${cy}" r="${R-3}" fill="none" stroke="rgba(255,255,255,.10)" stroke-width="1"/>
   `;
   let content = "";
   if (side === "front"){
-    // big stamped label, centered; maker's mark below for favors
-    content += `<text x="${cx}" y="${p.favor?cy-6:cy+10}" text-anchor="middle"
-      font-family="ui-monospace, monospace" font-size="40" font-weight="700"
+    // FRONT: the fate lives here — a status glyph enclosing the identity label,
+    // the hand-engraved keyword above, and (for favors) the verification number below.
+    content += fateGlyphSVG(p, cx, cy, R, ink);
+    // identity label, stamped, centered
+    content += `<text x="${cx}" y="${cy+8}" text-anchor="middle"
+      font-family="ui-monospace, monospace" font-size="30" font-weight="700"
       fill="${ink}" letter-spacing="2">${label}</text>`;
-    if (p.favor){
-      // maker's-mark placeholder (a ring + star glyph) — your custom punch goes here
-      content += `<g transform="translate(${cx},${cy+38})" opacity="0.85">
-        <circle r="16" fill="none" stroke="${ink}" stroke-width="2"/>
-        <path d="M0,-9 L2.6,-2.8 L9,-2.8 L3.9,1.1 L5.9,7.6 L0,3.8 L-5.9,7.6 L-3.9,1.1 L-9,-2.8 L-2.6,-2.8 Z" fill="${ink}"/>
-      </g>
-      <text x="${cx}" y="${cy+70}" text-anchor="middle" font-family="ui-monospace,monospace"
-        font-size="9" fill="${ink}" opacity=".6">maker's mark</text>`;
+    // keyword — hand-engraved, above the number (wobbled to read as engraved, not stamped)
+    if (p.keyword){
+      content += `<text x="${cx}" y="${cy-32}" text-anchor="middle"
+        font-family="'Comic Sans MS',cursive,monospace" font-size="15"
+        fill="${ink}" opacity=".8" letter-spacing="1">${escapeHtml(p.keyword)}</text>`;
     }
-  } else {
-    // back: verification number (favors) or blank
+    // favor verification number — hand-engraved on the FRONT now, below the label
     if (p.favor && p.verify){
-      content += `<text x="${cx}" y="${cy-6}" text-anchor="middle" font-family="ui-monospace,monospace"
-        font-size="10" fill="${ink}" opacity=".55" letter-spacing="2">VERIFY</text>`;
-      // engrave the 10 digits, slightly hand-wobbled to signal "engraved, not stamped"
       const digits = p.verify.split("");
       let dstr = "";
       digits.forEach((d,i)=>{
-        const x = cx - 67 + i*15;
-        const dy = cy + 14 + (i%2? 2 : -2);     // tiny wobble
+        const x = cx - 60 + i*13.3;
+        const dy = cy + 40 + (i%2? 2 : -2);
         const rot = (i%3-1)*4;
         dstr += `<text x="${x}" y="${dy}" text-anchor="middle" font-family="'Comic Sans MS',cursive,monospace"
-          font-size="17" fill="${ink}" transform="rotate(${rot} ${x} ${dy})">${d}</text>`;
+          font-size="13" fill="${ink}" transform="rotate(${rot} ${x} ${dy})">${d}</text>`;
       });
       content += dstr;
-      content += `<text x="${cx}" y="${cy+52}" text-anchor="middle" font-family="ui-monospace,monospace"
-        font-size="9" fill="${ink}" opacity=".55">hand-engrave</text>`;
-    } else {
-      content += `<text x="${cx}" y="${cy+6}" text-anchor="middle" font-family="ui-monospace,monospace"
-        font-size="12" fill="${ink}" opacity=".4">(blank back)</text>`;
     }
+  } else {
+    // BACK: the maker's mark, enlarged into a sigil that seals the coin.
+    content += makersSigilSVG(p, cx, cy, R, ink);
   }
   return `<svg viewBox="0 0 200 200" width="150" height="150" xmlns="http://www.w3.org/2000/svg">
     ${inner}${content}
   </svg>`;
+}
+
+// The fate-glyph drawn on the FRONT, enclosing the label. Inferred from status:
+//   kept = closed ring · standing = eternity (lemniscate in circle) ·
+//   broken/dead = ring left open · open = no glyph (still in play).
+function fateGlyphSVG(p, cx, cy, R, ink){
+  const gr = R - 22;                       // glyph radius, inside the face
+  const status = p.favor
+    ? (p.status==="kept" ? "kept" : (p.status==="broken" ? "broken" : "open"))
+    : p.status;
+
+  // helper drawings
+  const ring = (sw=3,op=.85)=>`<circle cx="${cx}" cy="${cy}" r="${gr}" fill="none" stroke="${ink}" stroke-width="${sw}" opacity="${op}"/>`;
+  const openRingBottom = ()=>{
+    const a = 55 * Math.PI/180;
+    const x1 = cx - gr*Math.sin(a), y1 = cy + gr*Math.cos(a);
+    const x2 = cx + gr*Math.sin(a), y2 = cy + gr*Math.cos(a);
+    return `<path d="M${x1.toFixed(1)} ${y1.toFixed(1)} A${gr} ${gr} 0 1 1 ${x2.toFixed(1)} ${y2.toFixed(1)}" fill="none" stroke="${ink}" stroke-width="3" opacity=".85"/>
+            <path d="M${x1.toFixed(1)} ${y1.toFixed(1)} q-5 6 -8 11" fill="none" stroke="${ink}" stroke-width="3" opacity=".85"/>
+            <path d="M${x2.toFixed(1)} ${y2.toFixed(1)} q5 6 8 11" fill="none" stroke="${ink}" stroke-width="3" opacity=".85"/>`;
+  };
+
+  // explicit circumstance glyph overrides the status-inferred one
+  if (p.glyph){
+    switch(p.glyph){
+      case "death":      // whole circle crossed by a horizon line
+        return ring(3) + `<line x1="${cx-gr-6}" y1="${cy}" x2="${cx+gr+6}" y2="${cy}" stroke="${ink}" stroke-width="3" opacity=".85" stroke-linecap="round"/>`;
+      case "abandoned":  // ring open at the bottom, splayed — your fault
+        return openRingBottom();
+      case "taken": {    // ring breached from outside by an external stroke — not your fault
+        const a = 55*Math.PI/180;
+        const y1 = cy - gr*Math.sin(a), y2 = cy + gr*Math.sin(a);
+        const xr = cx + gr*Math.cos(a);
+        return `<path d="M${xr.toFixed(1)} ${y1.toFixed(1)} A${gr} ${gr} 0 1 1 ${xr.toFixed(1)} ${y2.toFixed(1)}" fill="none" stroke="${ink}" stroke-width="3" opacity=".85"/>`
+          + `<line x1="${cx+gr+14}" y1="${cy}" x2="${cx+gr-6}" y2="${cy}" stroke="${ink}" stroke-width="3.4" opacity=".85" stroke-linecap="round"/>`
+          + `<path d="M${cx+gr+14} ${cy} l6 -4 M${cx+gr+14} ${cy} l6 4" fill="none" stroke="${ink}" stroke-width="2.4" opacity=".85" stroke-linecap="round"/>`;
+      }
+      case "sacrifice":  // kept ring + three trial-bars across it
+        return ring(3) + [0,1,2].map(i=>`<line x1="${cx-gr*0.6}" y1="${cy-8+i*8}" x2="${cx+gr*0.6}" y2="${cy-8+i*8}" stroke="${ink}" stroke-width="2" opacity=".7"/>`).join("");
+      case "easily":     // kept ring, light single stroke
+        return ring(1.8,.7);
+      case "overdue":    // kept ring + horizon beneath (time crossed, still honored)
+        return ring(3) + `<line x1="${cx-gr*0.7}" y1="${cy+gr*0.5}" x2="${cx+gr*0.7}" y2="${cy+gr*0.5}" stroke="${ink}" stroke-width="2" opacity=".6" stroke-dasharray="3 3"/>`;
+      case "eternity":   // lemniscate in the wholeness circle (standing)
+      default: break;
+    }
+  }
+
+  if (status === "kept") return ring(3);
+  if (status === "standing"){
+    const ly = cy - gr + 8, lw = 13, lh = 7;
+    return ring(2.4,.8) + `<path d="M${cx} ${ly}
+               C ${cx-lw} ${ly-lh}, ${cx-lw} ${ly+lh}, ${cx} ${ly}
+               C ${cx+lw} ${ly-lh}, ${cx+lw} ${ly+lh}, ${cx} ${ly} Z"
+            fill="none" stroke="${ink}" stroke-width="2.4" opacity=".9"/>`;
+  }
+  if (status === "broken") return openRingBottom();
+  return "";
+}
+
+// The maker's mark sigil on the BACK, enlarged. Placeholder geometry standing in for
+// your hand-drawn mark (S through two coils, center bar, wholeness circle with tail).
+// Wounded (scored) only when a promise died BY YOUR HAND.
+function makersSigilSVG(p, cx, cy, R, ink){
+  const wounded = !p.favor && p.status==="broken";  // your-fault death scores the sigil
+  const gr = R - 14;
+  let s = `<g fill="none" stroke="${ink}" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" opacity=".85">`;
+  // wholeness circle with a small overshoot tail at top-right
+  s += `<circle cx="${cx}" cy="${cy}" r="${gr}"/>`;
+  s += `<path d="M${cx+gr*0.55} ${cy-gr*0.78} q14 -8 16 6"/>`;
+  // two stacked coils
+  s += `<circle cx="${cx}" cy="${cy-16}" r="11"/>`;
+  s += `<circle cx="${cx}" cy="${cy+16}" r="11"/>`;
+  // vertical S through them
+  s += `<path d="M${cx+9} ${cy-26} C ${cx+9} ${cy-33}, ${cx-9} ${cy-33}, ${cx-9} ${cy-20}
+                 C ${cx-9} ${cy-6}, ${cx+9} ${cy+6}, ${cx+9} ${cy+20}
+                 C ${cx+9} ${cy+33}, ${cx-9} ${cy+33}, ${cx-9} ${cy+26}"/>`;
+  // center bar
+  s += `<line x1="${cx-20}" y1="${cy}" x2="${cx+20}" y2="${cy}"/>`;
+  s += `</g>`;
+  if (wounded){
+    // the score — a gouge across the sigil, "wounding my own image"
+    s += `<line x1="${cx-gr*0.8}" y1="${cy-gr*0.8}" x2="${cx+gr*0.8}" y2="${cy+gr*0.8}"
+            stroke="#a6584f" stroke-width="4" stroke-linecap="round" opacity=".9"/>`;
+    s += `<text x="${cx}" y="${cy+gr+10}" text-anchor="middle" font-family="ui-monospace,monospace"
+            font-size="8" fill="#a6584f" opacity=".8">scored — your hand</text>`;
+  }
+  return s;
 }
 
 function discMakerList(){
@@ -820,20 +1700,56 @@ function renderDiscMaker(){
   $("#dmTitle").textContent = "Make disc " + discLabel(p);
   $("#dmProgress").textContent = (dmIndex+1) + " of " + pending.length;
 
+  // tint the stage with the theme of the jar this disc belongs to
+  const themeKey = p.favor ? "favors" : p.status;
+  const tints = {
+    open:     "radial-gradient(80% 90% at 50% 0%, rgba(201,160,106,.14), transparent 70%)",
+    standing: "linear-gradient(180deg, rgba(125,106,156,.14), rgba(75,63,96,.10))",
+    kept:     "radial-gradient(70% 80% at 50% 10%, rgba(159,197,154,.16), transparent 70%)",
+    broken:   "linear-gradient(180deg, rgba(60,55,52,.22), rgba(40,36,33,.30))",
+    favors:   "radial-gradient(70% 80% at 50% 10%, rgba(201,162,75,.14), transparent 70%)"
+  };
+  stage.style.background = tints[themeKey] || "transparent";
+  stage.style.borderRadius = "var(--r)";
+
   stage.innerHTML = `
     <div class="dm-face"><div>${discFaceSVG(p,"front")}</div><div class="dm-side">front</div></div>
     <div class="dm-face"><div>${discFaceSVG(p,"back")}</div><div class="dm-side">back</div></div>`;
 
   // instructions
   let steps = [`Take an <span class="hl">${tier.metal}</span> blank (${tier.label.toLowerCase()} weight).`];
-  steps.push(`Stamp the front: <span class="hl">${discLabel(p)}</span>.`);
+  steps.push(`Stamp the <span class="hl">front</span> with the label: <span class="hl">${discLabel(p)}</span>.`);
+  if (p.keyword){
+    steps.push(`Hand-engrave the keyword above the number: <span class="hl">${escapeHtml(p.keyword)}</span>.`);
+  }
+  // the fate glyph that belongs on the front — explicit choice wins, else by status
+  const glyphNames = {
+    eternity:"eternity mark (lemniscate in the wholeness circle)",
+    death:"death glyph (whole ring crossed by the horizon)",
+    abandoned:"abandoned glyph (ring left open at the bottom — your hand)",
+    taken:"taken glyph (ring breached from outside)",
+    sacrifice:"kept-at-sacrifice (ring crossed by three trial-bars)",
+    easily:"kept-easily (a light single ring)",
+    overdue:"kept-overdue (ring with the horizon beneath)"
+  };
+  const byStatus = { standing:"eternity mark (lemniscate in the wholeness circle)", kept:"kept-ring (enclose the label)", broken:"dead mark (the ring left open)", open:null };
+  const glyphName = p.favor ? null : (p.glyph ? glyphNames[p.glyph] : byStatus[p.status]);
+  if (glyphName){
+    steps.push(`Engrave the <span class="hl">${glyphName}</span> around the label.`);
+  }
   if (p.favor){
-    steps.push(`Stamp your <span class="hl">maker's mark</span> below the label.`);
-    steps.push(`Hand-engrave on the back: <span class="hl">${p.verify}</span>.`);
-    steps.push(`Ink the grooves, wipe the face. Hand it out as an IOU.`);
+    steps.push(`Hand-engrave the verification number on the front: <span class="hl">${p.verify}</span>.`);
+  }
+  steps.push(`On the <span class="hl">back</span>, stamp your <span class="hl">maker's mark</span> (the sigil).`);
+  if (!p.favor && p.status==="broken"){
+    steps.push(`This one died by your hand — <span class="hl">score the maker's mark</span>, then it goes to the Dead (Broken) jar.`);
   } else {
-    steps.push(`Ink the stamped grooves, wipe the face.`);
-    steps.push(`Drop it in the <span class="hl">${p.favor?'':capitalize(p.status)}</span> jar.`);
+    steps.push(`Ink the grooves, wipe the face.`);
+    if (p.favor){
+      steps.push(`Hand it out as an IOU.`);
+    } else {
+      steps.push(`Drop it in the <span class="hl">${capitalize(p.status)}</span> jar.`);
+    }
   }
   $("#dmInstructions").innerHTML = "<ol>"+steps.map(s=>`<li>${s}</li>`).join("")+"</ol>";
 }
@@ -859,9 +1775,10 @@ function renderWorklist(){
     : pending.length + " discs waiting to be stamped";
   $("#wlItems").innerHTML = pending.map(p=>{
     const tier = TIERS[p.tier] || TIERS.ordinary;
+    const kw = p.keyword ? `[${escapeHtml(p.keyword)}] ` : "";
     const txt = p.favor
-      ? (p.text ? escapeHtml(p.text) : "favor (TBD)") + (p.verify ? ` · back: ${p.verify}` : "")
-      : escapeHtml(p.text);
+      ? kw + (p.text ? escapeHtml(p.text) : "favor (TBD)") + (p.verify ? ` · back: ${p.verify}` : "")
+      : kw + escapeHtml(p.text);
     return `<div class="wl-row">
       <span class="wl-disc">${discLabel(p)}</span>
       <span class="wl-metal">${tier.metal}</span>
@@ -879,10 +1796,21 @@ function doAction(act, id){
     p.status="kept"; p.date_closed=now(); p.reason="";
     save(); toast(p.favor ? "Favor done." : "Kept. Moved to the Kept jar.");
   }
-  else if (act==="standing"){ p.status="standing"; p.date_closed=null; p.reason=""; save(); toast("Now a standing promise."); }
+  else if (act==="standing"){
+    p.status="standing"; p.date_closed=null; p.reason="";
+    // if a stamped disc wasn't copper, the physical disc now needs re-forging in copper
+    if (p.stamped && p.tier!=="standing") p.needsReforge = true;
+    p.tier = "standing";
+    save(); toast(p.needsReforge ? "Now standing — re-forge this disc in copper." : "Now a standing promise.");
+  }
   else if (act==="break"){
-    const why = prompt("Why did this one break? (kept for your own learning — optional)") || "";
-    p.status="broken"; p.date_closed=now(); p.reason=why.trim(); save(); toast("Marked broken.");
+    const ks = keystone();
+    // the keystone judges every break — surface its vow as the standard being measured against
+    const judged = (ks && ks.stamped && !isKeystone(p) && !p.favor)
+      ? `Measured against the keystone:\n“${ks.text || KEYSTONE_VOW}”\n\n`
+      : "";
+    const why = prompt(judged + "Why did this one break? (kept for your own learning — optional)") || "";
+    p.status="broken"; p.date_closed=now(); p.reason=why.trim(); save(); toast("Marked dead. Moved to the Dead (Broken) jar.");
   }
   else if (act==="redeem"){
     // verify the hand-engraved 10-digit number on the back before redeeming
@@ -898,12 +1826,6 @@ function doAction(act, id){
     p.status="redeemed"; p.date_redeemed=now();
     save(); toast("Verified & redeemed. You now owe this favor.");
   }
-  else if (act==="reopen"){
-    // favors return to outstanding; normal promises to open
-    p.status = p.favor ? "outstanding" : "open";
-    p.date_closed=null; p.date_redeemed=null; p.reason="";
-    save(); toast("Reopened.");
-  }
   else if (act==="stamp"){ p.stamped=true; save(); toast("Marked stamped — disc "+discLabel(p)+"."); }
   else if (act==="unstamp"){ p.stamped=false; save(); toast("Marked as not yet stamped."); }
   else if (act==="edit"){ openSheet(p); }
@@ -915,6 +1837,9 @@ function openSheet(p=null){
   draftFavor = p ? !!p.favor : false;
   $("#sheetTitle").textContent = p ? (p.favor?"Edit favor token":"Edit promise") : "Make a promise";
   $("#fText").value = p ? (p.text||"") : "";
+  draftKeyword = p ? (p.keyword || "") : "";
+  $("#fKeyword").value = draftKeyword;
+  draftGlyph = p ? (p.glyph || "") : "";
   draftWho = p ? p.who : "self";
   draftName = p ? (p.name || "") : "";
   $("#fName").value = draftName;
@@ -925,9 +1850,71 @@ function openSheet(p=null){
   const locked = p && (p.status==="kept" || p.status==="broken" || p.status==="redeemed");
   $("#favorField").style.display = locked ? "none" : "block";
   $("#standingField").style.display = (locked || draftFavor) ? "none" : "block";
+  // delete: only for an existing, not-yet-stamped promise
+  $("#deleteRow").style.display = (p && !p.stamped) ? "block" : "none";
   paintSeg();
+  renderKwSuggest();
+  renderGlyphPicker(p);
   $("#scrim").classList.add("open");
   $("#fText").focus();
+}
+
+// Show circumstance-glyph options appropriate to the promise's current fate.
+function renderGlyphPicker(p){
+  const field = $("#glyphField"), box = $("#glyphChips");
+  if (!field || !box){ return; }
+  const status = p && !p.favor ? p.status : (p && p.favor ? p.status : "open");
+  let opts = [];
+  if (p && !p.favor && p.status === "broken"){
+    field.style.display = "block";
+    $("#glyphLabel").textContent = "Fate-glyph — how this promise died";
+    opts = [
+      ["abandoned","Abandoned — you let it fall (your fault)"],
+      ["taken","Taken — ended by another / outside force"],
+      ["death","Death — the person it was made to died"],
+    ];
+  } else if (p && !p.favor && p.status === "kept"){
+    field.style.display = "block";
+    $("#glyphLabel").textContent = "Fate-glyph — how this promise was kept";
+    opts = [
+      ["","Plainly (just the ring)"],
+      ["sacrifice","At great sacrifice"],
+      ["easily","Easily / naturally"],
+      ["overdue","Long overdue"],
+      ["death","Kept, though they are gone"],
+    ];
+  } else {
+    // open / standing / favors — no circumstance glyph to choose yet
+    field.style.display = "none";
+    return;
+  }
+  box.innerHTML = opts.map(([val,label])=>
+    `<span class="kw-chip ${val===draftGlyph?'on':''}" data-glyph="${val}">${label}</span>`
+  ).join("");
+  box.querySelectorAll(".kw-chip").forEach(c=>{
+    c.onclick = ()=>{
+      draftGlyph = c.dataset.glyph;
+      box.querySelectorAll(".kw-chip").forEach(x=>x.classList.toggle("on", x.dataset.glyph===draftGlyph));
+    };
+  });
+}
+
+// render the tappable candidate-keyword chips from the current vow text
+function renderKwSuggest(){
+  const box = $("#kwSuggest");
+  if (!box) return;
+  const cands = keywordCandidates($("#fText").value);
+  box.innerHTML = cands.map(w =>
+    `<span class="kw-chip ${w===draftKeyword?'on':''}" data-kw="${w}">${w}</span>`
+  ).join("");
+  box.querySelectorAll(".kw-chip").forEach(c=>{
+    c.onclick = ()=>{
+      // tap to set; tap the active one again to clear
+      draftKeyword = (draftKeyword === c.dataset.kw) ? "" : c.dataset.kw;
+      $("#fKeyword").value = draftKeyword;
+      renderKwSuggest();
+    };
+  });
 }
 function paintSeg(){
   // favor toggle
@@ -973,12 +1960,13 @@ function saveDraft(){
   // favors may have empty text (nebulous); normal promises must have text
   if (!draftFavor && !text){ toast("Write the promise first."); return; }
   const name = (draftFavor || draftWho==="other") ? $("#fName").value.trim() : "";
+  const keyword = $("#fKeyword").value.trim().toUpperCase();
   let tier = draftTier;
   if (draftFavor && tier==="standing") tier = "serious";  // safety: no standing favors
 
   if (editingId){
     const p = state.promises.find(x=>x.id===editingId);
-    p.text = text; p.name = name; p.tier = tier;
+    p.text = text; p.name = name; p.tier = tier; p.keyword = keyword; p.glyph = draftGlyph;
     if (p.favor){
       // keep favor identity; only structural status changes handled elsewhere
     } else {
@@ -995,13 +1983,13 @@ function saveDraft(){
       id: crypto.randomUUID(),
       disc: state.nextDisc++,
       favor: true,
-      text, who: "other", name, tier,
+      text, who: "other", name, tier, keyword,
       status: "outstanding",
       verify,                       // 10-digit, engrave on the back
       stamped: false,
       date_made: now(), date_redeemed: null, date_closed: null, reason: ""
     });
-    activeJar = "favors";
+    activeJar = "favors"; currentTab = "favors";
     const np = state.promises[state.promises.length-1];
     save();
     toast("Favor token "+discLabel(np)+" — stamp front, engrave "+verify+" on back.");
@@ -1009,12 +1997,12 @@ function saveDraft(){
     state.promises.push({
       id: crypto.randomUUID(),
       disc: state.nextDisc++,
-      text, who: draftWho, name, tier,
+      text, who: draftWho, name, tier, keyword,
       status: draftStanding ? "standing" : "open",
       stamped: false,
       date_made: now(), date_closed: null, reason: ""
     });
-    activeJar = draftStanding ? "standing" : "open";
+    activeJar = draftStanding ? "standing" : "open"; currentTab = "jars";
     const np = state.promises[state.promises.length-1];
     save(); toast("Bound. Stamp disc "+discLabel(np)+" in "+TIERS[np.tier].metal+".");
   }
@@ -1041,6 +2029,7 @@ async function linkFile(){
       if (data && Array.isArray(data.promises)){
         state = data;
         if (!state.nextDisc) state.nextDisc = Math.max(0,...state.promises.map(p=>p.disc||0))+1;
+        if (!Array.isArray(state.memorial)) state.memorial = [];
         localStorage.setItem(STORE_KEY, JSON.stringify(state));
       }
       toast("Linked. This file now auto-saves.");
@@ -1091,11 +2080,12 @@ function exportJSON(){
 }
 function exportEngraving(){
   // one row per disc — what a stamping/engraving job needs
-  const rows = [["disc_stamp","is_favor","metal","front_text","verify_back","status","to","recipient","stamped","date_made"]];
+  const rows = [["disc_stamp","keyword_engrave","is_favor","metal","front_text","verify_back","status","to","recipient","stamped","date_made"]];
   state.promises.slice().sort((a,b)=>a.disc-b.disc).forEach(p=>{
     const tier = TIERS[p.tier] || TIERS.ordinary;
     rows.push([
       discLabel(p),
+      p.keyword || "",
       p.favor ? "FAVOR" : "",
       tier.metal,
       (p.text||"").replace(/\s+/g,' ').slice(0,40),
@@ -1117,6 +2107,7 @@ function importJSON(file){
       if (!data.promises || !Array.isArray(data.promises)) throw 0;
       state = data;
       if (!state.nextDisc) state.nextDisc = Math.max(0,...state.promises.map(p=>p.disc||0))+1;
+      if (!Array.isArray(state.memorial)) state.memorial = [];
       save(); toast("Ledger imported.");
     } catch(e){ toast("That file didn't look like a ledger."); }
   };
@@ -1125,13 +2116,38 @@ function importJSON(file){
 
 /* ---------- wire up ---------- */
 $("#addFab").onclick = ()=> openSheet();
+$("#tabbar").querySelectorAll(".tab").forEach(t=>{
+  t.onclick = ()=>{
+    currentTab = t.dataset.tab;
+    if (currentTab === "favors") whoFilter = "all";
+    render();
+  };
+});
 $("#cancelBtn").onclick = closeSheet;
 $("#saveBtn").onclick = saveDraft;
+$("#deleteBtn").onclick = ()=>{
+  if (!editingId) return;
+  const p = state.promises.find(x=>x.id===editingId);
+  if (!p) return;
+  if (p.stamped){ toast("Stamped discs can't be deleted."); return; }
+  if (confirm("Delete this promise? The disc number won't be reused, and this can't be undone.")){
+    state.promises = state.promises.filter(x=>x.id!==editingId);
+    save(); closeSheet(); toast("Promise deleted.");
+  }
+};
 $("#scrim").onclick = e=>{ if(e.target===$("#scrim")) closeSheet(); };
 $("#fWho").onclick = e=>{ if(e.target.dataset.who){ draftWho=e.target.dataset.who; paintSeg(); } };
 $("#fStanding").onclick = e=>{ if(e.target.dataset.standing){ draftStanding=e.target.dataset.standing==="true"; paintSeg(); } };
 $("#fFavor").onclick = e=>{ if(e.target.dataset.favor){ draftFavor=e.target.dataset.favor==="true"; if(draftFavor&&draftTier==="standing")draftTier="serious"; paintSeg(); } };
 $("#fTier").onclick = e=>{ if(e.target.dataset.tier){ draftTier=e.target.dataset.tier; paintSeg(); } };
+$("#fText").addEventListener("input", renderKwSuggest);
+$("#fKeyword").addEventListener("input", e=>{
+  draftKeyword = e.target.value.trim().toUpperCase();
+  // reflect manual typing onto the chips (highlight if it matches a candidate)
+  $("#kwSuggest").querySelectorAll(".kw-chip").forEach(c=>{
+    c.classList.toggle("on", c.dataset.kw === draftKeyword);
+  });
+});
 $("#search").oninput = render;
 document.querySelectorAll(".chip[data-who]").forEach(c=>{
   c.onclick = ()=>{ whoFilter=c.dataset.who;
