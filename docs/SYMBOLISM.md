@@ -132,6 +132,11 @@ It judges all the others: when you break any promise, the keystone's vow surface
 the standard you are measured against. Integrity as wholeness — and the wholeness
 circle that frames the entire language echoes it.
 
+It carries its own founding glyph — **the plumb and the level** (a wholeness circle
+with a full vertical spine, a horizontal level, and a foundation bar), engraved only
+on M-001, only once, at its Founding. The one mark in the language with nothing
+cyclical in it: everything else moves or returns; the keystone is the fixed point.
+
 ---
 
 ## Favors — debts you choose to owe
@@ -148,6 +153,11 @@ token is genuine and unspent.
 
 One ceremony turns a tracked promise into a bound one. The weight scales through the
 **metal and the words**, never by adding steps.
+
+**The Founding** — the keystone alone, once ever. The Binding deepened: begun at an
+empty table (nothing else made yet), with the founding glyph engraved here and
+nowhere else, and a founding line said only this once — *"By this I will measure all
+the rest."* The one promise made before there is anything to compare it to.
 
 **The Binding** — every promise, ~one minute:
 pause (the last honest chance not to bind) → *"What I speak, I will carry"* → speak
@@ -183,3 +193,6 @@ you can see, and a record that will outlast the remembering.
 ## Change log
 *(Add dated lines as meaning-bearing decisions are made.)*
 - **2026-06:** Document created, capturing current symbolism across all layers.
+- **2026-06:** Added the keystone glyph ("the plumb and the level") and *The
+  Founding* rite (keystone consecration). Reconciled README; converted the app's
+  memorial input to an in-app sheet (reliable in installed PWAs).

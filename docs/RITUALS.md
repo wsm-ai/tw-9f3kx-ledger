@@ -43,98 +43,119 @@ seal it, then affirm what you've done.
 
 ---
 
-## The Keeping — when a promise is fulfilled
+## The Founding — for the keystone alone (once, ever)
 
-The Binding's echo and its inverse. Where the Binding *takes on* weight, the
-Keeping *sets it down* — an exhale to the Binding's inhale. Six beats in a single
-arc: **declare → retrieve → vow → seal → place → done.**
+The keystone (**M-001 · CODE**) is bound **first and alone**, before any other
+promise exists. This rite happens exactly once in the life of the practice. It is the
+Binding, deepened — same arc, but with three additions that mark it as the origin.
 
-1. **The opening line** (fixed, said first):
-   > *"My word is my bond."*
+1. **The empty table.** Begin with nothing else made — no other discs, no jars yet
+   filled. The keystone is bound into emptiness, because everything else will be
+   measured against it. Sit with that before you start.
 
-2. **Retrieve.** Take the disc from the Open jar. Hold it. Read its label — the
-   promise as you made it.
+2. **The long pause.** As in the Binding, but hold it longer. This is the threshold
+   of the *whole practice*, not just one promise. You are deciding whether to walk the
+   path at all.
 
-3. **Speak the vow** — the full original sentence aloud, the way you first bound it.
+3. **The opening line** (as always):
+   > *"What I speak, I will carry."*
 
-4. **The ring.** Scribe the kept-ring around the mark on the back — the promise come
-   full circle. This is the seal: the fate made visible (see the fate-language
-   grammar — kept = an enclosing ring).
+4. **Speak the founding vow:**
+   > *"I will do what I believe is right, and bear the cost of it."*
 
-5. **Place.** Set the disc in the Kept jar — and let it go.
+5. **The strike.** Stamp `M-001` in copper. The first mark of the system.
 
-6. **The closing line** (fixed):
-   > *"And so it was done."*
+6. **Engrave the keystone glyph** — the plumb and the level (the wholeness circle,
+   the full spine, the level, the foundation bar). This glyph is made **here and
+   nowhere else, ever again.** Take your time; it is the root of the language.
+   Engrave the maker's mark on the back, whole.
 
-**The frame's meaning:** the Keeping is built past-tense against the Binding's
-future-tense — you're closing a loop you opened. You state the principle first
-(*My word is my bond*), then produce the evidence: here is the promise, here are
-the words I gave, here is the ring that proves the circle closed. The closing line
-is the verdict over a disc at rest — the principle declared, then the deed sealed
-against it. Both rituals end on a fixed line spoken over a placed disc.
+7. **Speak the vow again** over the finished disc.
+
+8. **The founding line** (said only at the Founding, never repeated):
+   > *"By this I will measure all the rest. Let everything I bind answer to it."*
+
+9. **The closing line** (as always):
+   > *"I will bear it."*
+
+10. **Place it first.** Set M-001 into the Standing vessel — the first weight on the
+    shelf. Everything after joins it.
+
+**Why it stands apart:** the keystone is the only promise made before there is
+anything to compare it to. The empty table, the founding glyph, and the founding line
+mark it as the origin point — the one promise that judges, rather than is judged.
 
 ---
 
-## The Breaking — when a promise is let go
+## The Keeping — for a promise fulfilled
 
-The hardest ritual, and the one most carefully built. Broken is *honest, not
-punishing* — but a promise broken **by your own choice** is measured against the
-vow you swore, and the words name that plainly. The opening branches by truth: a
-break you choose carries a rebuke; a break forced on you carries only loss. Six
-beats: **name → retrieve → reckon → sever → place → release.**
+The exhale to the Binding's inhale. Past-tense throughout: the work is already done;
+this rite witnesses it.
 
-1. **The opening line** (fixed — say the one that is true):
+1. **Retrieve the disc** from its jar. Hold it as you did when it was blank — but it
+   is marked now, and the marking is finished.
 
-   *If you are choosing to set it down:*
-   > *"I swore to bear this weight at any cost. I break that word now. I sever the
-   > thread, and let it fall from me."*
+2. **The opening line** (fixed):
+   > *"My word is my bond."*
 
-   *If it was taken from you:*
-   > *"This weight was taken from my hands. The thread is severed, and falls where I
-   > cannot follow."*
+3. **Speak the vow** one last time — what you promised, now in the past: *I said I
+   would, and I have.*
 
-2. **Retrieve.** Take the disc from its jar. Hold it. Read its label and speak the
-   original vow once — name plainly what you made.
+4. **Scribe the kept-ring** — close the fate-glyph into its enclosing ring (and the
+   kept-way, if one applies: at sacrifice, easily, overdue, or though they are gone).
+   The ring is the promise come full circle.
 
-3. **The reason.** Say why, aloud, in your own words. No defense, no performance —
-   the true reason, even if it's only for you. This is the honesty the broken jar is
-   built on.
+5. **The closing line** (fixed):
+   > *"And so it was done."*
 
-4. **The slash.** Scribe the severing stroke through the mark on the back — the
-   thread cut, clean. Not erased; marked as ended (see the fate-language grammar —
-   broken = a severing slash).
+6. **Place** the disc in the Kept vessel — the disc graduates from where it was into
+   the light.
 
-5. **Place.** Set the disc in the amber jar. Out of sight is not out of record.
+---
 
-6. **The closing line** (fixed, both paths land here):
+## The Breaking — for a promise let die
+
+The hardest rite, and the most honest. It branches at the opening, by *why* the
+promise died — but converges on one closing, because every death ends the same way.
+
+1. **Retrieve the disc.** Hold what you are about to let fall.
+
+2. **The opening** — choose the branch that is true:
+   - **A chosen break** (you let it fall — your fault; a rebuke you speak to
+     yourself):
+     > *"I swore to bear this weight at any cost. I break that word now. I sever the
+     > thread, and let it fall from me."*
+   - **A taken break** (it was ended by something outside you — mourning, not
+     rebuke):
+     > *"This weight was taken from my hands. The thread is severed, and falls where I
+     > cannot follow."*
+
+3. **Speak the reason** aloud — plainly, for your own learning. Why it died.
+
+4. **The sever** — scribe the slash through the fate-glyph (the severing stroke).
+   If the break was **yours**, also **score the maker's mark** on the back — the
+   wounded sigil, carried only by promises you personally failed.
+
+5. **The closing line** (fixed, said for every death, both branches):
    > *"The thread is cut. My hands are empty — and where it was cut, I do not heal."*
 
-**The frame's meaning:** the two openings carry different moral weights, not just
-different situations. A break you choose is set against the keystone's own vow
-(*I will bear it, whatever the cost*) — so "I break that word now" is a rebuke you
-speak against yourself, with nowhere to hide behind "I couldn't." A break taken
-from you is not yours to be rebuked for; those words mourn rather than indict. The
-universal close holds the same weight every time, the way the Binding's does: the
-break costs the breaker. You are the thread as much as you hold it, and where it
-was cut, the wound stays open — the scar carried, not displayed, like the amber jar
-itself.
+6. **Place** the disc in the Dead vessel — sealed away, one-way. It is not
+   resurrected.
+
+> The closing refuses false comfort: a broken promise leaves a mark that does not
+> fully heal. That honesty is the point — the rite does not absolve, it records.
 
 ---
 
 ## Notes
 
-- **Keystone first.** When materials arrive, the keystone (M-001 · CODE) is bound
-  alone, as the founding act — the first walk of the path. Take the pause longer than
-  usual; everything after answers to this one.
+- **The Founding comes first.** The keystone (M-001 · CODE) is bound alone, via *The
+  Founding*, before any other promise — the first walk of the path. Everything after
+  answers to it.
 - **Favors:** the Binding still applies when you make a favor token. The maker's mark
-  and the hand-engraved verification number are part of the strike step (step 4).
-- **The kept-ring:** the Keeping assumes you mark the disc on keeping, per the
-  fate-language (kept = enclosing ring on the back). If a kept promise also carries
-  another glyph (e.g. kept-though-gone after a death), scribe both — marks accrete in
-  chronological order.
-- **Other moments** (promoting, redeeming, death, review) may earn their own
-  rituals later — designed one at a time, the way the glyph language grows. For now,
-  the Binding, the Keeping, and the Breaking are fixed.
+  and the hand-engraved verification number are part of the strike step.
+- **Still to design** (one at a time, as situations call): promoting (open →
+  standing), redeeming a favor, the death/memorial rite, and the periodic review.
 
 ---
 
@@ -142,10 +163,11 @@ itself.
 
 | Moment | Ritual | Status |
 |--------|--------|--------|
+| Founding the keystone (once) | The Founding | defined |
 | Binding a promise | The Binding | defined |
 | Keeping / completing | The Keeping | defined |
-| Breaking | The Breaking | defined |
+| Breaking / letting die | The Breaking | defined |
 | Promoting (open → standing) | — | to design |
 | Redeeming a favor | — | to design |
 | A death (memorial disc) | — | to design |
-| Periodic review | — | to design |
+| Periodic review (the reckoning) | — | to design |
