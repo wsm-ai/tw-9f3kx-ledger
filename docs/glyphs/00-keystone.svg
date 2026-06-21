@@ -1,0 +1,23 @@
+<svg viewBox="0 0 220 240" xmlns="http://www.w3.org/2000/svg">
+  <rect width="220" height="240" fill="#1a1714"/>
+  <!-- THE KEYSTONE GLYPH — "the plumb and the level"
+       The founding mark, engraved only on M-001 at its making, never again.
+       The wholeness circle (the signature frame) holds a full vertical spine
+       (constancy, the backbone all fate-glyphs share) crossed by a single
+       horizontal baseline at center — a plumb line and a level. It is the
+       standard against which every other promise is measured true.
+       Straight strokes only: the keystone is the fixed thing, the one mark
+       with nothing cyclical in it — everything else moves; this does not. -->
+  <g stroke="#c9a24b" fill="none" stroke-linecap="round" stroke-linejoin="round">
+    <!-- the wholeness circle -->
+    <circle cx="110" cy="100" r="66" stroke-width="2.6"/>
+    <!-- the spine: full vertical height, edge of circle to edge -->
+    <line x1="110" y1="34" x2="110" y2="166" stroke-width="3.4"/>
+    <!-- the level: single horizontal baseline through the crossing -->
+    <line x1="44" y1="100" x2="176" y2="100" stroke-width="3.4"/>
+    <!-- the foundation: a short heavier bar at the spine's base (the stone set first) -->
+    <line x1="92" y1="166" x2="128" y2="166" stroke-width="4.2"/>
+  </g>
+  <text x="110" y="200" text-anchor="middle" fill="#ddd2bf" font-family="monospace" font-size="13">the plumb and the level</text>
+  <text x="110" y="222" text-anchor="middle" fill="#8c8273" font-family="monospace" font-size="12">the keystone · the standard set first</text>
+</svg>
