@@ -732,6 +732,29 @@
   </div>
 </div>
 
+<!-- MEMORIAL SHEET (in-app input — reliable inside installed PWAs, unlike prompt()) -->
+<div class="scrim" id="memScrim">
+  <div class="sheet">
+    <h2 id="memTitle">Remember someone</h2>
+    <div class="field">
+      <label>Their name</label>
+      <input type="text" id="memName" placeholder="The person who has died" autocomplete="off">
+    </div>
+    <div class="field">
+      <label>Date they died (optional)</label>
+      <input type="date" id="memDate">
+    </div>
+    <div class="field">
+      <label>A line of remembrance (optional)</label>
+      <textarea id="memNote" placeholder="Something to hold."></textarea>
+    </div>
+    <div class="sheet-actions">
+      <button class="btn ghost" id="memCancel">Cancel</button>
+      <button class="btn gold" id="memSave">Remember</button>
+    </div>
+  </div>
+</div>
+
 <script>
 /* ===================================================================
    THE WEIGHT — promise ledger
@@ -1455,33 +1478,17 @@ function buildChartSVG(bound, kept, died, useWeight){
     ${xLabels}
   </svg>`;
 }
+let memEditingName = null;   // name being edited, or null when adding new
 function memorialAction(act, name){
   if (act==="add" || act==="edit"){
     const existing = name ? state.memorial.find(m=>m.name===name) : null;
-    const who = prompt("Name of the person who has died:", existing ? existing.name : "");
-    if (who===null) return;
-    const nm = who.trim();
-    if (!nm){ toast("Need a name."); return; }
-    const when = prompt("Date they died (YYYY-MM-DD, or leave blank):", existing && existing.date_gone ? existing.date_gone.slice(0,10) : "");
-    if (when===null) return;
-    const note = prompt("A line of remembrance (optional):", existing ? (existing.note||"") : "");
-    if (note===null) return;
-    let date_gone = "";
-    if (when.trim()){
-      const d = new Date(when.trim());
-      date_gone = isNaN(d.getTime()) ? "" : d.toISOString();
-      if (!date_gone) toast("Couldn't read that date — saved without one.");
-    }
-    if (existing){
-      existing.name = nm; existing.date_gone = date_gone; existing.note = note.trim();
-      toast("Memorial updated.");
-    } else {
-      state.memorial.push({ name: nm, date_gone, note: note.trim() });
-      const n = promisesForPerson(nm).length;
-      toast(n ? `${nm} remembered. ${n} promise${n>1?'s':''} now carry the death glyph.` : `${nm} remembered.`);
-    }
-    currentTab = "memorial";   // make sure the memorial view is showing
-    save();
+    memEditingName = existing ? existing.name : null;
+    $("#memTitle").textContent = existing ? "Edit remembrance" : "Remember someone";
+    $("#memName").value = existing ? existing.name : "";
+    $("#memDate").value = existing && existing.date_gone ? existing.date_gone.slice(0,10) : "";
+    $("#memNote").value = existing ? (existing.note||"") : "";
+    $("#memScrim").classList.add("open");
+    setTimeout(()=>$("#memName").focus(), 50);
   }
   else if (act==="remove"){
     const m = state.memorial.find(x=>x.name===name);
@@ -1491,6 +1498,32 @@ function memorialAction(act, name){
       save(); toast("Removed from memorial.");
     }
   }
+}
+
+function closeMemSheet(){ $("#memScrim").classList.remove("open"); memEditingName = null; }
+
+function saveMemorial(){
+  const nm = $("#memName").value.trim();
+  if (!nm){ toast("Need a name."); return; }
+  const whenRaw = $("#memDate").value.trim();
+  let date_gone = "";
+  if (whenRaw){
+    const d = new Date(whenRaw);
+    date_gone = isNaN(d.getTime()) ? "" : d.toISOString();
+  }
+  const note = $("#memNote").value.trim();
+  const existing = memEditingName ? state.memorial.find(m=>m.name===memEditingName) : null;
+  if (existing){
+    existing.name = nm; existing.date_gone = date_gone; existing.note = note;
+    toast("Memorial updated.");
+  } else {
+    state.memorial.push({ name: nm, date_gone, note });
+    const n = promisesForPerson(nm).length;
+    toast(n ? `${nm} remembered. ${n} promise${n>1?'s':''} now carry the death glyph.` : `${nm} remembered.`);
+  }
+  currentTab = "memorial";
+  closeMemSheet();
+  save();
 }
 
 function actionsFor(p){
@@ -1603,42 +1636,55 @@ function fateGlyphSVG(p, cx, cy, R, ink){
             <path d="M${x2.toFixed(1)} ${y2.toFixed(1)} q5 6 8 11" fill="none" stroke="${ink}" stroke-width="3" opacity=".85"/>`;
   };
 
+  // THE KEYSTONE GLYPH — "the plumb and the level". Permanent, only on M-001,
+  // engraved at its making and never changing. The wholeness circle holds a full
+  // vertical spine crossed by a horizontal level, with a heavier foundation bar at
+  // the base. Drawn under whatever fate the keystone itself carries.
+  const keystoneMark = ()=>{
+    const sp = gr + 4;                       // spine reaches just past the ring
+    return ring(2.6,.9)
+      + `<line x1="${cx}" y1="${cy-sp}" x2="${cx}" y2="${cy+sp}" stroke="${ink}" stroke-width="3.2" opacity=".9" stroke-linecap="round"/>`
+      + `<line x1="${cx-sp}" y1="${cy}" x2="${cx+sp}" y2="${cy}" stroke="${ink}" stroke-width="3.2" opacity=".9" stroke-linecap="round"/>`
+      + `<line x1="${cx-13}" y1="${cy+sp}" x2="${cx+13}" y2="${cy+sp}" stroke="${ink}" stroke-width="4" opacity=".9" stroke-linecap="round"/>`;
+  };
+  const keystonePrefix = isKeystone(p) ? keystoneMark() : "";
+
   // explicit circumstance glyph overrides the status-inferred one
   if (p.glyph){
     switch(p.glyph){
       case "death":      // whole circle crossed by a horizon line
-        return ring(3) + `<line x1="${cx-gr-6}" y1="${cy}" x2="${cx+gr+6}" y2="${cy}" stroke="${ink}" stroke-width="3" opacity=".85" stroke-linecap="round"/>`;
+        return keystonePrefix + ring(3) + `<line x1="${cx-gr-6}" y1="${cy}" x2="${cx+gr+6}" y2="${cy}" stroke="${ink}" stroke-width="3" opacity=".85" stroke-linecap="round"/>`;
       case "abandoned":  // ring open at the bottom, splayed — your fault
-        return openRingBottom();
+        return keystonePrefix + openRingBottom();
       case "taken": {    // ring breached from outside by an external stroke — not your fault
         const a = 55*Math.PI/180;
         const y1 = cy - gr*Math.sin(a), y2 = cy + gr*Math.sin(a);
         const xr = cx + gr*Math.cos(a);
-        return `<path d="M${xr.toFixed(1)} ${y1.toFixed(1)} A${gr} ${gr} 0 1 1 ${xr.toFixed(1)} ${y2.toFixed(1)}" fill="none" stroke="${ink}" stroke-width="3" opacity=".85"/>`
+        return keystonePrefix + `<path d="M${xr.toFixed(1)} ${y1.toFixed(1)} A${gr} ${gr} 0 1 1 ${xr.toFixed(1)} ${y2.toFixed(1)}" fill="none" stroke="${ink}" stroke-width="3" opacity=".85"/>`
           + `<line x1="${cx+gr+14}" y1="${cy}" x2="${cx+gr-6}" y2="${cy}" stroke="${ink}" stroke-width="3.4" opacity=".85" stroke-linecap="round"/>`
           + `<path d="M${cx+gr+14} ${cy} l6 -4 M${cx+gr+14} ${cy} l6 4" fill="none" stroke="${ink}" stroke-width="2.4" opacity=".85" stroke-linecap="round"/>`;
       }
       case "sacrifice":  // kept ring + three trial-bars across it
-        return ring(3) + [0,1,2].map(i=>`<line x1="${cx-gr*0.6}" y1="${cy-8+i*8}" x2="${cx+gr*0.6}" y2="${cy-8+i*8}" stroke="${ink}" stroke-width="2" opacity=".7"/>`).join("");
+        return keystonePrefix + ring(3) + [0,1,2].map(i=>`<line x1="${cx-gr*0.6}" y1="${cy-8+i*8}" x2="${cx+gr*0.6}" y2="${cy-8+i*8}" stroke="${ink}" stroke-width="2" opacity=".7"/>`).join("");
       case "easily":     // kept ring, light single stroke
-        return ring(1.8,.7);
+        return keystonePrefix + ring(1.8,.7);
       case "overdue":    // kept ring + horizon beneath (time crossed, still honored)
-        return ring(3) + `<line x1="${cx-gr*0.7}" y1="${cy+gr*0.5}" x2="${cx+gr*0.7}" y2="${cy+gr*0.5}" stroke="${ink}" stroke-width="2" opacity=".6" stroke-dasharray="3 3"/>`;
+        return keystonePrefix + ring(3) + `<line x1="${cx-gr*0.7}" y1="${cy+gr*0.5}" x2="${cx+gr*0.7}" y2="${cy+gr*0.5}" stroke="${ink}" stroke-width="2" opacity=".6" stroke-dasharray="3 3"/>`;
       case "eternity":   // lemniscate in the wholeness circle (standing)
       default: break;
     }
   }
 
-  if (status === "kept") return ring(3);
+  if (status === "kept") return keystonePrefix + ring(3);
   if (status === "standing"){
     const ly = cy - gr + 8, lw = 13, lh = 7;
-    return ring(2.4,.8) + `<path d="M${cx} ${ly}
+    return keystonePrefix + ring(2.4,.8) + `<path d="M${cx} ${ly}
                C ${cx-lw} ${ly-lh}, ${cx-lw} ${ly+lh}, ${cx} ${ly}
                C ${cx+lw} ${ly-lh}, ${cx+lw} ${ly+lh}, ${cx} ${ly} Z"
             fill="none" stroke="${ink}" stroke-width="2.4" opacity=".9"/>`;
   }
-  if (status === "broken") return openRingBottom();
-  return "";
+  if (status === "broken") return keystonePrefix + openRingBottom();
+  return keystonePrefix;
 }
 
 // The maker's mark sigil on the BACK, enlarged. Placeholder geometry standing in for
@@ -1733,6 +1779,10 @@ function renderDiscMaker(){
     overdue:"kept-overdue (ring with the horizon beneath)"
   };
   const byStatus = { standing:"eternity mark (lemniscate in the wholeness circle)", kept:"kept-ring (enclose the label)", broken:"dead mark (the ring left open)", open:null };
+  // the keystone carries its founding glyph, engraved once at its making
+  if (isKeystone(p)){
+    steps.push(`Engrave the <span class="hl">keystone glyph</span> — the wholeness circle with a full vertical spine and a horizontal level (the plumb and the level), foundation bar at the base. This mark is made once, only here.`);
+  }
   const glyphName = p.favor ? null : (p.glyph ? glyphNames[p.glyph] : byStatus[p.status]);
   if (glyphName){
     steps.push(`Engrave the <span class="hl">${glyphName}</span> around the label.`);
@@ -2177,6 +2227,9 @@ $("#wlToggle").onclick = ()=>{
 $("#makeDiscsBtn").onclick = openDiscMaker;
 $("#dmClose").onclick = closeDiscMaker;
 $("#discScrim").onclick = e=>{ if(e.target===$("#discScrim")) closeDiscMaker(); };
+$("#memCancel").onclick = closeMemSheet;
+$("#memSave").onclick = saveMemorial;
+$("#memScrim").onclick = e=>{ if(e.target===$("#memScrim")) closeMemSheet(); };
 $("#dmPrev").onclick = ()=>{ dmIndex--; renderDiscMaker(); };
 $("#dmNext").onclick = ()=>{ dmIndex++; renderDiscMaker(); };
 $("#dmStamped").onclick = ()=>{
